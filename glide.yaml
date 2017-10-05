@@ -1,0 +1,16 @@
+package: github.com/ReconfigureIO/reco
+import:
+- package: github.com/mholt/archiver
+- package: github.com/spf13/cobra
+- package: github.com/spf13/viper
+- package: github.com/pkg/sftp
+- package: github.com/briandowns/spinner
+- package: github.com/olekukonko/ts
+- package: github.com/olekukonko/tablewriter
+- package: github.com/dustin/go-humanize
+- package: github.com/abiosoft/goutils
+  subpackages:
+  - env
+- package: github.com/mitchellh/ioprogress
+- package: github.com/inconshreveable/mousetrap
+  version: ~1.0.0

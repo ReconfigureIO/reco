@@ -1,0 +1,33 @@
+package cmd
+
+import (
+	"github.com/spf13/cobra"
+)
+
+// authCmd represents the auth command
+var authCmd = &cobra.Command{
+	Use:     "auth",
+	Aliases: []string{"login"},
+	Short:   "Authenticate your account",
+	Long: `Authenticate your account.
+
+You will be directed to reconfigure.io to copy your API token.
+An oauth login flow may be required to access reconfigure.io.
+`,
+	Run:    auth,
+	PreRun: initializeCmd,
+}
+
+func init() {
+	RootCmd.AddCommand(authCmd)
+}
+
+func auth(cmd *cobra.Command, args []string) {
+	var token = ""
+	if len(args) > 0 {
+		token = args[0]
+	}
+	if err := tool.Auth(token); err != nil {
+		exitWithError(err)
+	}
+}

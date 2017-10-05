@@ -1,0 +1,7 @@
+version: '2'
+services:
+  go:
+    build: docker
+    working_dir: /go/src/github.com/ReconfigureIO/reco
+    volumes:
+      - .:/go/src/github.com/ReconfigureIO/reco

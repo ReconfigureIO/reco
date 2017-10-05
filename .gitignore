@@ -1,0 +1,10 @@
+.reco*
+reco.*
+.idea/
+dist/
+jarvice.sh
+.example/
+jargons.txt
+vendor
+.glide
+build/

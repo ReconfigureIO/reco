@@ -1,0 +1,83 @@
+version: "{build}"
+
+platform: x64
+
+# Source Config
+clone_folder: c:\gopath\src\github.com\ReconfigureIO\reco
+
+environment:
+  GOPATH: c:\gopath
+  GOVERSION: 1.9.1
+  VERSION: master
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  # Install the specific Go version.
+  - rmdir c:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
+  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
+  - set Path=c:\go\bin;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Git\mingw64\bin;%PATH%
+  - go version
+  - go env
+  - choco install make
+  - choco install nsis
+  - appveyor DownloadFile https://github.com/Masterminds/glide/releases/download/v0.11.1/glide-v0.11.1-windows-amd64.zip
+  - powershell Expand-Archive -Path glide-v0.11.1-windows-amd64.zip -DestinationPath C:\Glide
+  - copy C:\Glide\windows-amd64\glide.exe c:\gopath\bin
+  - cd C:\gopath\src\github.com\ReconfigureIO\reco && C:\Glide\windows-amd64\glide.exe install
+
+build: off
+
+test_script:
+  - make test
+
+after_test:
+  - go build -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
+  - C:\reco.exe version
+  - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
+  - C:\reco.exe check --source C:\reco-examples\addition
+  - C:\reco.exe check --source C:\reco-examples\histogram
+  - C:\reco.exe check --source C:\reco-examples\histogram-array
+  - C:\reco.exe check --source C:\reco-examples\histogram-parallel
+  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
+  - copy C:\reco.exe C:\gopath\src\github.com\ReconfigureIO\reco\nsis
+  - cd C:\gopath\src\github.com\ReconfigureIO\reco\nsis && "C:\Program Files (x86)\NSIS\makensis.exe" reco.nsi
+  - appveyor PushArtifact C:\gopath\src\github.com\ReconfigureIO\reco\nsis\reco-%VERSION%.exe
+
+deploy:
+  - provider: S3
+    access_key_id:
+      secure: pnVvAHRFxuQal9FtXtj8kkMXTJWBEPQ0Pq6KbfPtSVI=
+    secret_access_key:
+      secure: l/N8Edoy4Lu5jGUCx7GYHfVHjrSxfd54J0BJRp1QizZS3zLHkIWTPgQ3xoc+LIUO
+    bucket: reconfigure.io
+    region: us-east-1
+    unzip: false
+    set_public: true
+    folder: reco/releases
+    on:
+      appveyor_repo_tag: true
+  - provider: S3
+    access_key_id:
+      secure: pnVvAHRFxuQal9FtXtj8kkMXTJWBEPQ0Pq6KbfPtSVI=
+    secret_access_key:
+      secure: l/N8Edoy4Lu5jGUCx7GYHfVHjrSxfd54J0BJRp1QizZS3zLHkIWTPgQ3xoc+LIUO
+    bucket: reconfigure.io
+    region: us-east-1
+    unzip: false
+    set_public: true
+    folder: reco/releases
+    on:
+      branch: master
+
+notifications:
+  - provider: Email
+    on_build_success: false
+
+  - provider: Slack
+    channel: #status
+    incoming_webhook:
+      secure: LbTv30cQKAAQHOmq90O6hFm1mjFRvZljYwtx7V00jq/HadB/IWPTwFzWFUOZMR6heHHMBxzGRmN8kRmqK5qw/q230fHqkJ4qZ+wUsiXz7VU=
+
