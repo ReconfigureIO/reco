@@ -132,6 +132,10 @@ func (r recocheckDep) Fetch() error {
 }
 
 func (r recocheckDep) Installed() bool {
+	r.once.Do(func() {
+		r.makeVirtualGoPath()
+	})
+
 	type reqFile struct {
 		name  string
 		dir   bool
@@ -168,9 +172,6 @@ outer:
 		}
 	}
 
-	r.once.Do(func() {
-		r.makeVirtualGoPath()
-	})
 	return true
 }
 
