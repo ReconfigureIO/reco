@@ -34,7 +34,12 @@ var checkCmd = &cobra.Command{
 	},
 }
 
+var checkCmdVars struct {
+	update bool
+}
+
 func init() {
+	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for, and install dependency updates")
 	RootCmd.AddCommand(checkCmd)
 }
 
@@ -227,19 +232,23 @@ outer:
 		}
 	}
 
-	// validate tag
-	b, err := ioutil.ReadFile(r.eTagFile())
-	if err != nil {
-		return statusNotInstalled
-	}
-	latestETag, err := r.latestETag()
-	if err != nil {
-		logger.Info.Println("could not check for updates")
+	// update
+	if checkCmdVars.update {
+		// validate tag
+		b, err := ioutil.ReadFile(r.eTagFile())
+		if err != nil {
+			return statusUpdateAvailable
+		}
+		latestETag, err := r.latestETag()
+		if err != nil {
+			logger.Info.Println("could not check for updates")
+		}
+
+		if string(b) != latestETag {
+			return statusUpdateAvailable
+		}
 	}
 
-	if string(b) != latestETag {
-		return statusUpdateAvailable
-	}
 	return statusInstalled
 }
 
