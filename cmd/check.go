@@ -194,4 +194,6 @@ func (r recocheckDep) makeVirtualGoPath() error {
 	if stat.IsDir() {
 		return os.Symlink(vendorDir, filepath.Join(r.VendorDir(), "src"))
 	}
+
+	return nil
 }
