@@ -182,11 +182,16 @@ func (r recocheckDep) VendorDir() string {
 	return filepath.Join(srcDir, ".reco-work", "gopath")
 }
 
-func (r recocheckDep) makeVirtualGoPath() {
+func (r recocheckDep) makeVirtualGoPath() error {
 	os.MkdirAll(r.VendorDir(), 0755)
 	vendorDir := filepath.Join(srcDir, "vendor")
 	stat, err := os.Stat(vendorDir)
-	if err == nil && stat.IsDir() {
-		os.Symlink(vendorDir, filepath.Join(r.VendorDir(), "src"))
+
+	if err != nil {
+		return err
+	}
+
+	if stat.IsDir() {
+		return os.Symlink(vendorDir, filepath.Join(r.VendorDir(), "src"))
 	}
 }
