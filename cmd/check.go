@@ -277,6 +277,8 @@ func (r recocheckDep) makeVirtualGoPath() error {
 				return nil
 			case "no such file or directory":
 				return nil
+			case "The system cannot find the file specified.":
+				return nil
 			}
 		}
 
