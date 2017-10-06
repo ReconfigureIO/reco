@@ -5,7 +5,7 @@ import (
 )
 
 func testMakeVirualGoPathWorks(t *testing.T) {
-	err := dep.makeVirtualGoPath()
+	err := recocheckDep{}.makeVirtualGoPath()
 	if err != nil {
 		t.Error(err)
 	}
