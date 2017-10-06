@@ -268,7 +268,24 @@ func (r recocheckDep) makeVirtualGoPath() error {
 	os.MkdirAll(r.VendorDir(), 0755)
 	vendorDir := filepath.Join(srcDir, "vendor")
 	stat, err := os.Stat(vendorDir)
-	if err == nil && stat.IsDir() {
+
+	if err != nil {
+
+		if pErr, ok := err.(*os.PathError); ok {
+			switch pErr.Err.Error() {
+			case os.ErrNotExist.Error():
+				return nil
+			case "no such file or directory":
+				return nil
+			case "The system cannot find the file specified.":
+				return nil
+			}
+		}
+
+		return err
+	}
+
+	if stat.IsDir() {
 		virtualVendorDir := filepath.Join(r.VendorDir(), "src")
 		return symlink(vendorDir, virtualVendorDir)
 	}

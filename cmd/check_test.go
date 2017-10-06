@@ -1,19 +1,37 @@
 package cmd
 
 import (
-	"runtime"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
-func init() {
-	if runtime.GOOS == "windows" {
-		srcDir = "C:\reco-examples\addition"
-	}
-}
+func TestMakeVirtualGoPathWorksIfNoVendor(t *testing.T) {
+	srcDir = getCurrentDir()
+	vendorDir := filepath.Join(srcDir, "vendor")
+	os.RemoveAll(vendorDir)
 
-func TestMakeVirualGoPathWorks(t *testing.T) {
 	err := recocheckDep{}.makeVirtualGoPath()
 	if err != nil {
 		t.Error(err)
 	}
+
+	os.RemoveAll(vendorDir)
+}
+
+func TestMakeVirtualGoPathWorksIfVendor(t *testing.T) {
+	srcDir = getCurrentDir()
+	vendorDir := filepath.Join(srcDir, "vendor")
+
+	os.RemoveAll(vendorDir)
+	os.RemoveAll(recocheckDep{}.VendorDir())
+	os.MkdirAll(vendorDir, 0755)
+
+	err := recocheckDep{}.makeVirtualGoPath()
+	if err != nil {
+		t.Error(err)
+	}
+
+	os.RemoveAll(vendorDir)
+
 }
