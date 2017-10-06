@@ -123,6 +123,7 @@ func archiveDir(dir string) (string, error) {
 
 	ignoredFiles := []string{
 		".reco-work",
+		".reco",
 	}
 	files := ignoreFiles(dir, ignoredFiles)
 	if len(files) == 0 {
