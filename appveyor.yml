@@ -27,6 +27,7 @@ install:
   - powershell Expand-Archive -Path glide-v0.11.1-windows-amd64.zip -DestinationPath C:\Glide
   - copy C:\Glide\windows-amd64\glide.exe c:\gopath\bin
   - cd C:\gopath\src\github.com\ReconfigureIO\reco && C:\Glide\windows-amd64\glide.exe install
+  - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
 
 build: off
 
@@ -36,7 +37,6 @@ test_script:
 after_test:
   - go build -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
   - C:\reco.exe version
-  - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array

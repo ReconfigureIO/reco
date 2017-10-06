@@ -3,6 +3,8 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/ReconfigureIO/reco/downloader"
+	"github.com/ReconfigureIO/reco/logger"
 	"github.com/abiosoft/goutils/env"
 	"github.com/mholt/archiver"
 	"github.com/spf13/cobra"
@@ -31,17 +34,29 @@ var checkCmd = &cobra.Command{
 	},
 }
 
+var checkCmdVars struct {
+	update bool
+}
+
 func init() {
+	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for, and install dependency updates")
 	RootCmd.AddCommand(checkCmd)
 }
 
 func check(_ *cobra.Command, args []string) {
 	dep := dependencies["check"]
-	if !dep.Installed() {
-		fmt.Println("check dependency not found, installing...")
+	update := func() {
 		if err := dep.Fetch(); err != nil {
 			exitWithError(err)
 		}
+	}
+	switch dep.Installed() {
+	case statusUpdateAvailable:
+		fmt.Println("check dependency update available, updating...")
+		update()
+	case statusNotInstalled:
+		fmt.Println("check dependency not found, installing...")
+		update()
 	}
 	srcFile := filepath.Join(srcDir, "main.go")
 	if len(args) > 0 {
@@ -75,10 +90,18 @@ func check(_ *cobra.Command, args []string) {
 	}
 }
 
+type depStatus int8
+
+const (
+	statusNotInstalled depStatus = iota
+	statusUpdateAvailable
+	statusInstalled
+)
+
 type dep interface {
 	Name() string
 	Fetch() error
-	Installed() bool
+	Installed() depStatus
 	Dir() string
 	VendorDir() string
 }
@@ -97,8 +120,11 @@ func (f File) Name() string {
 	return string(f)
 }
 
-// TODO make this version configurable
-const recocheckURL = "https://s3.amazonaws.com/reconfigure.io/reco-check/bundles/reco-check-bundle-latest-x86_64-%s.zip"
+const (
+	// TODO make this version configurable
+	recocheckURL = "https://s3.amazonaws.com/reconfigure.io/reco-check/bundles/reco-check-bundle-latest-x86_64-%s.zip"
+	eTag         = "ETag"
+)
 
 type recocheckDep struct {
 	once sync.Once
@@ -110,7 +136,7 @@ func (r recocheckDep) Name() string {
 	return "reco-check"
 }
 
-func (r recocheckDep) Fetch() error {
+func (r recocheckDep) downloadURL() (string, error) {
 	var label string
 	switch runtime.GOOS {
 	case "linux":
@@ -120,18 +146,56 @@ func (r recocheckDep) Fetch() error {
 	case "windows":
 		label = "pc-windows-msvc"
 	default:
-		return fmt.Errorf("unsupported platform %v", runtime.GOOS)
+		return "", fmt.Errorf("unsupported platform %v", runtime.GOOS)
 	}
-	downloadURL := fmt.Sprintf(recocheckURL, label)
-	dlFile, err := downloader.FromURL(downloadURL)
+	return fmt.Sprintf(recocheckURL, label), nil
+}
+
+func (r recocheckDep) Fetch() error {
+	downloadURL, err := r.downloadURL()
+	if err != nil {
+		return err
+	}
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		return err
+	}
+	dlFile, err := downloader.FromReader(resp.Body, resp.ContentLength)
 	if err != nil {
 		return err
 	}
 	defer os.Remove(dlFile)
+
+	err = ioutil.WriteFile(r.eTagFile(), []byte(resp.Header.Get(eTag)), 0644)
+	if err != nil {
+		logger.Info.Println("could not persist dependency version ", err)
+	}
 	return archiver.Zip.Open(dlFile, r.Dir())
 }
 
-func (r recocheckDep) Installed() bool {
+func (r recocheckDep) latestETag() (string, error) {
+	downloadURL, err := r.downloadURL()
+	if err != nil {
+		return "", err
+	}
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	return resp.Header.Get(eTag), nil
+}
+
+func (r recocheckDep) eTagFile() string {
+	return filepath.Join(r.Dir(), eTag)
+}
+
+func (r recocheckDep) Installed() depStatus {
+	r.once.Do(func() {
+		r.makeVirtualGoPath()
+	})
+
 	type reqFile struct {
 		name  string
 		dir   bool
@@ -143,11 +207,11 @@ func (r recocheckDep) Installed() bool {
 	}
 	dir, err := os.Open(r.Dir())
 	if err != nil {
-		return false
+		return statusNotInstalled
 	}
 	stats, err := dir.Readdir(-1)
 	if err != nil {
-		return false
+		return statusNotInstalled
 	}
 outer:
 	for _, stat := range stats {
@@ -164,14 +228,28 @@ outer:
 	}
 	for i := range files {
 		if !files[i].found {
-			return false
+			return statusNotInstalled
 		}
 	}
 
-	r.once.Do(func() {
-		r.makeVirtualGoPath()
-	})
-	return true
+	// update
+	if checkCmdVars.update {
+		// validate tag
+		b, err := ioutil.ReadFile(r.eTagFile())
+		if err != nil {
+			return statusUpdateAvailable
+		}
+		latestETag, err := r.latestETag()
+		if err != nil {
+			logger.Info.Println("could not check for updates")
+		}
+
+		if string(b) != latestETag {
+			return statusUpdateAvailable
+		}
+	}
+
+	return statusInstalled
 }
 
 func (r recocheckDep) Dir() string {
@@ -179,14 +257,52 @@ func (r recocheckDep) Dir() string {
 }
 
 func (r recocheckDep) VendorDir() string {
+	srcDir, err := filepath.Abs(srcDir)
+	if err != nil {
+		exitWithError(err)
+	}
 	return filepath.Join(srcDir, ".reco-work", "gopath")
 }
 
-func (r recocheckDep) makeVirtualGoPath() {
+func (r recocheckDep) makeVirtualGoPath() error {
 	os.MkdirAll(r.VendorDir(), 0755)
 	vendorDir := filepath.Join(srcDir, "vendor")
 	stat, err := os.Stat(vendorDir)
-	if err == nil && stat.IsDir() {
-		os.Symlink(vendorDir, filepath.Join(r.VendorDir(), "src"))
+
+	if err != nil {
+
+		if pErr, ok := err.(*os.PathError); ok {
+			switch pErr.Err.Error() {
+			case os.ErrNotExist.Error():
+				return nil
+			case "no such file or directory":
+				return nil
+			case "The system cannot find the file specified.":
+				return nil
+			}
+		}
+
+		return err
 	}
+
+	if stat.IsDir() {
+		virtualVendorDir := filepath.Join(r.VendorDir(), "src")
+		return symlink(vendorDir, virtualVendorDir)
+	}
+	return nil
+}
+
+func symlink(src, dest string) error {
+	if runtime.GOOS != "windows" {
+		return os.Symlink(src, dest)
+	}
+
+	// windows
+	// regular symlink doesn't give desired result,
+	// file copying seems to be the best workaround so far.
+	// But there are concerns for when the vendor directory
+	// grows really large.
+	os.RemoveAll(dest)
+	cmd := exec.Command("cmd.exe", "/C", fmt.Sprintf("xcopy /E /Y /I %s %s", src, dest))
+	return cmd.Run()
 }
