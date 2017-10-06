@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestMakeVirualGoPathWorksIfNoVendor(t *testing.T) {
+func TestMakeVirtualGoPathWorksIfNoVendor(t *testing.T) {
 	srcDir = getCurrentDir()
 	vendorDir := filepath.Join(srcDir, "vendor")
 	os.RemoveAll(vendorDir)
@@ -19,7 +19,7 @@ func TestMakeVirualGoPathWorksIfNoVendor(t *testing.T) {
 	os.RemoveAll(vendorDir)
 }
 
-func TestMakeVirualGoPathWorksIfVendor(t *testing.T) {
+func TestMakeVirtualGoPathWorksIfVendor(t *testing.T) {
 	srcDir = getCurrentDir()
 	vendorDir := filepath.Join(srcDir, "vendor")
 
