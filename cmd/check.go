@@ -257,6 +257,10 @@ func (r recocheckDep) Dir() string {
 }
 
 func (r recocheckDep) VendorDir() string {
+	srcDir, err := filepath.Abs(srcDir)
+	if err != nil {
+		exitWithError(err)
+	}
 	return filepath.Join(srcDir, ".reco-work", "gopath")
 }
 
