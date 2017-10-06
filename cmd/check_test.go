@@ -25,7 +25,6 @@ func TestMakeVirtualGoPathWorksIfVendor(t *testing.T) {
 
 	os.RemoveAll(vendorDir)
 	os.RemoveAll(recocheckDep{}.VendorDir())
-
 	os.MkdirAll(vendorDir, 0755)
 
 	err := recocheckDep{}.makeVirtualGoPath()

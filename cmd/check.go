@@ -168,7 +168,7 @@ func (r recocheckDep) Fetch() error {
 
 	err = ioutil.WriteFile(r.eTagFile(), []byte(resp.Header.Get(eTag)), 0644)
 	if err != nil {
-		logger.Info.Println("could not persist dependency version")
+		logger.Info.Println("could not persist dependency version ", err)
 	}
 	return archiver.Zip.Open(dlFile, r.Dir())
 }
@@ -286,8 +286,23 @@ func (r recocheckDep) makeVirtualGoPath() error {
 	}
 
 	if stat.IsDir() {
-		return os.Symlink(vendorDir, filepath.Join(r.VendorDir(), "src"))
+		virtualVendorDir := filepath.Join(r.VendorDir(), "src")
+		return symlink(vendorDir, virtualVendorDir)
+	}
+	return nil
+}
+
+func symlink(src, dest string) error {
+	if runtime.GOOS != "windows" {
+		return os.Symlink(src, dest)
 	}
 
-	return nil
+	// windows
+	// regular symlink doesn't give desired result,
+	// file copying seems to be the best workaround so far.
+	// But there are concerns for when the vendor directory
+	// grows really large.
+	os.RemoveAll(dest)
+	cmd := exec.Command("cmd.exe", "/C", fmt.Sprintf("xcopy /E /Y /I %s %s", src, dest))
+	return cmd.Run()
 }
