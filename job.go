@@ -54,6 +54,13 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 	if len(str.Job.Events) > 0 {
 		firstEvent := str.Job.Events[0]
 		lastEvent := str.Job.Events[len(str.Job.Events)-1]
+		// Handle terminated status with a prior final status.
+		if len(str.Job.Events) > 2 {
+			ev := str.Job.Events[len(str.Job.Events)-2]
+			if isCompleted(ev.Status) {
+				lastEvent = ev
+			}
+		}
 		ji.Status = strings.ToLower(lastEvent.Status)
 		ji.Time = firstEvent.Timestamp
 		if eventSorter(str.Job.Events).Completed() {
@@ -105,7 +112,12 @@ func (e eventSorter) Completed() bool {
 	if len(e) < 2 {
 		return false
 	}
-	switch strings.ToUpper(e[len(e)-1].Status) {
+	return isCompleted(e[len(e)-1].Status)
+}
+
+// isCompleted checks if the status is a final status.
+func isCompleted(status string) bool {
+	switch strings.ToUpper(status) {
 	case "COMPLETED", "ERRORED", "TERMINATED":
 		return true
 	}
