@@ -453,6 +453,13 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 	if err := decodeJSON(resp.Body, &respJSON); err != nil {
 		return nil, err
 	}
+
+	// handle status filter
+	status := filters.String("status")
+	if status != "" {
+		respJSON.Jobs = jobFilter(respJSON.Jobs).Filter("status", status)
+	}
+
 	sort.Sort(jobSorter(respJSON.Jobs))
 	if limit > 0 && limit < len(respJSON.Jobs) {
 		respJSON.Jobs = respJSON.Jobs[:limit]
@@ -476,9 +483,7 @@ func (p clientImpl) listGraphs(filters M) ([]jobInfo, error) {
 	return p.listJobs("graph", filters)
 }
 
-func (p clientImpl) stopJob(eventType string, buildId string) error {
-	// curl -v -XPOST -H "Content-Type: application/json"  -d '{"status": "TERMINATED"}'
-	// http://localhost:8080/simulations/1/events
+func (p clientImpl) stopJob(eventType string, id string) error {
 	var endpoint string
 	switch eventType {
 	case "simulation":
@@ -489,6 +494,7 @@ func (p clientImpl) stopJob(eventType string, buildId string) error {
 		endpoint = endpoints.builds.Events()
 	}
 	req := p.apiRequest(endpoint)
+	req.param("id", id)
 	reqBody := M{"status": "TERMINATED"}
 	resp, err := req.Do("POST", reqBody)
 	if err != nil {
