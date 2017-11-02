@@ -40,15 +40,18 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
+	if len(str.Job.Events) == 0 {
+		str.Job.Events = str.Events
+	}
+	if str.Project.ID == "" {
+		str.Project = str.Build.Project
+	}
 	ji.ID = str.ID
 	ji.Status = "unstarted"
 	ji.Project = str.Project.Name
 	ji.Command = str.Command
 	if str.Build.ID != "" {
 		ji.Build = str.Build.ID
-	}
-	if len(str.Job.Events) == 0 {
-		str.Job.Events = str.Events
 	}
 	sort.Sort(eventSorter(str.Job.Events))
 	if len(str.Job.Events) > 0 {

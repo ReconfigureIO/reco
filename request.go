@@ -155,6 +155,12 @@ type apiResponse struct {
 	} `json:"project"`
 	Build struct {
 		ID string `json:"id"`
+		// workaround for deployments
+		// TODO: fix on platform
+		Project struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"project"`
 	} `json:"build,omitempty"`
 	// workaround for deployments
 	// TODO: fix on platform
