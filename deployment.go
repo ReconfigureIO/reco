@@ -140,6 +140,10 @@ func (p deploymentJob) Connect(id string) error {
 	if err := server.Start(); err != nil {
 		return err
 	}
+
 	logger.Std.Printf("Deployment %s is available on %s", id, server.Info().Listen.String())
+
+	server.Wait()
+
 	return nil
 }

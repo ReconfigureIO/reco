@@ -26,6 +26,9 @@ type Proxy interface {
 	// Stop stops the proxy server.
 	Stop() error
 
+	// Wait waits for the proxy server to terminate.
+	Wait()
+
 	// Info gives information about the proxy connection.
 	Info() Info
 }
@@ -35,6 +38,7 @@ var _ Proxy = &proxyImpl{}
 type proxyImpl struct {
 	info     *Info
 	listener net.Listener
+	wait     chan struct{}
 }
 
 // New creates a new proxy server that proxies connection to addr.
@@ -58,6 +62,7 @@ func (p *proxyImpl) Start() error {
 		}
 		p.listener = l
 		p.info.Listen = l.Addr().(*net.TCPAddr)
+		p.wait = make(chan struct{})
 	}
 
 	go p.listen()
@@ -77,6 +82,8 @@ func (p *proxyImpl) listen() {
 
 		go p.handle(conn)
 	}
+
+	close(p.wait)
 }
 
 func (p *proxyImpl) handle(conn net.Conn) {
@@ -115,4 +122,8 @@ func (p *proxyImpl) Stop() error {
 
 func (p *proxyImpl) Info() Info {
 	return *p.info
+}
+
+func (p *proxyImpl) Wait() {
+	<-p.wait
 }
