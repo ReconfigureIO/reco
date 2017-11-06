@@ -2,28 +2,38 @@ package reco
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"strings"
 	"time"
 
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/ReconfigureIO/reco/printer"
+	"github.com/ReconfigureIO/reco/proxy"
 	humanize "github.com/dustin/go-humanize"
 )
 
+// DeploymentProxy proxies to a running deployment instance.
+type DeploymentProxy interface {
+	// Connect performs a proxy connection.
+	Connect(id string) error
+}
+
 var _ Job = deploymentJob{}
+var _ DeploymentProxy = deploymentJob{}
 
 type deploymentJob struct {
 	clientImpl
 }
 
 func (p deploymentJob) Start(args Args) (string, error) {
+	logger.Info.ShowSpinner(true)
+	defer logger.Info.ShowSpinner(false)
+
 	buildID := String(args.At(0))
 	command := String(args.At(1))
 	wait := Bool(args.Last())
 	cmdArgs := StringSlice(args.At(2))
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
 
 	req := p.apiRequest(endpoints.deployments.String())
 	if len(args) > 0 {
@@ -110,4 +120,26 @@ func (p deploymentJob) List(filter M) (printer.Table, error) {
 
 func (p deploymentJob) Log(id string, writer io.Writer) error {
 	return p.clientImpl.logJob("deployment", id)
+}
+
+func (p deploymentJob) Connect(id string) error {
+	resp, err := p.clientImpl.getJob("deployment", id)
+	if err != nil {
+		return err
+	}
+	if resp.IPAddress == "" {
+		if resp.Status != "RUNNING" {
+			return errors.New("deployment is not running")
+		}
+		return errors.New("instance is not ready for network communications")
+	}
+	server, err := proxy.New(fmt.Sprintf("%s:80", resp.IPAddress))
+	if err != nil {
+		return err
+	}
+	if err := server.Start(); err != nil {
+		return err
+	}
+	logger.Std.Printf("Deployment %s is available on %s", id, server.Info().Listen.String())
+	return nil
 }

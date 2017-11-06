@@ -24,13 +24,14 @@ type Job interface {
 
 // jobInfo gives information about a build.
 type jobInfo struct {
-	ID       string
-	Time     time.Time
-	Duration time.Duration
-	Status   string
-	Project  string
-	Command  string
-	Build    string
+	ID        string
+	Time      time.Time
+	Duration  time.Duration
+	Status    string
+	Project   string
+	Command   string
+	Build     string
+	IPAddress string
 }
 
 // UnmarshalJSON customizes JSON decoding for BuildInfo.
