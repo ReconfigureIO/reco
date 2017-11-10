@@ -9,8 +9,8 @@ import (
 
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/ReconfigureIO/reco/printer"
-	"github.com/ReconfigureIO/reco/proxy"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/skratchdot/open-golang/open"
 )
 
 // DeploymentProxy proxies to a running deployment instance.
@@ -123,27 +123,20 @@ func (p deploymentJob) Log(id string, writer io.Writer) error {
 }
 
 func (p deploymentJob) Connect(id string) error {
-	resp, err := p.clientImpl.getJob("deployment", id)
-	if err != nil {
-		return err
-	}
-	if resp.IPAddress == "" {
-		if resp.Status != "RUNNING" {
-			return errors.New("deployment is not running")
+	for {
+		resp, err := p.clientImpl.getJob("deployment", id)
+		if err != nil {
+			return err
 		}
-		return errors.New("instance is not ready for network communications")
-	}
-	server, err := proxy.New(fmt.Sprintf("%s:80", resp.IPAddress))
-	if err != nil {
-		return err
-	}
-	if err := server.Start(); err != nil {
-		return err
-	}
 
-	logger.Std.Printf("Deployment %s is available on %s", id, server.Info().Listen.String())
+		if resp.IsCompleted() {
+			return errors.New("instance has shutdown")
+		}
 
-	server.Wait()
+		if resp.IPAddress != "" {
+			return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+		}
 
-	return nil
+		time.Sleep(10 * time.Second)
+	}
 }

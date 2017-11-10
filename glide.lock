@@ -1,5 +1,5 @@
-hash: bfb8c55f036d8b7f55e791141ff115d1b6317bddd053e0c707807c66b07814bb
-updated: 2017-09-07T16:43:46.6487076+01:00
+hash: 4f0c85996a4ae57935b2fc519d7d44e8b8828ba41b02390b16c5bedec4eb4bfe
+updated: 2017-11-10T20:07:52.217974726Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -69,6 +69,10 @@ imports:
   - xxHash32
 - name: github.com/pkg/sftp
   version: dddd9cf3c7889aa0fefd2e8a529367a3e1f3b669
+- name: github.com/skratchdot/open-golang
+  version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
+  subpackages:
+  - open
 - name: github.com/spf13/afero
   version: 9be650865eab0c12963d8753212f4f9c66cdcf12
   subpackages:

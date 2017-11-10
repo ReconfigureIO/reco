@@ -14,3 +14,6 @@ import:
 - package: github.com/mitchellh/ioprogress
 - package: github.com/inconshreveable/mousetrap
   version: ~1.0.0
+- package: github.com/skratchdot/open-golang
+  subpackages:
+  - open
