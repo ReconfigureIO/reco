@@ -43,6 +43,7 @@ var (
 	errProjectNotCreated = errors.New("no projects found. Run 'reco project create' to create one")
 	errProjectNotFound   = errors.New("project not found")
 	errNetworkError      = errors.New("network error")
+	errNotFound          = errors.New("not found")
 	errInvalidToken      = errors.New("the token is invalid")
 	errUnknownError      = errors.New("unknown error occurred")
 	errBadResponse       = errors.New("bad response from server")
@@ -236,8 +237,8 @@ func (p clientImpl) waitAndLog(jobType string, id string) error {
 	getStatus := func() string {
 		var status = "WAITING"
 		job, err := p.getJob(jobType, id)
-		if l := len(job.Job.Events); err == nil && l > 0 {
-			status = job.Job.Events[l-1].Status
+		if err == nil && job.Status != "" {
+			return job.Status
 		}
 		return status
 	}
@@ -274,9 +275,9 @@ func (p clientImpl) logs(jobType string, id string) error {
 	return err
 }
 
-func (p clientImpl) getJob(jobType string, id string) (apiResponse, error) {
+func (p clientImpl) getJob(jobType string, id string) (jobInfo, error) {
 	var apiResp struct {
-		Job apiResponse `json:"value"`
+		Job jobInfo `json:"value"`
 	}
 	var endpoint string
 	switch jobType {

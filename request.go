@@ -137,6 +137,8 @@ func (p *clientRequest) Do(method string, body interface{}) (*http.Response, err
 		switch resp.StatusCode {
 		case 401, 403:
 			err = errAuthFailed
+		case 404:
+			err = errNotFound
 		}
 	} else if err != nil {
 		err = errNetworkError
@@ -164,8 +166,9 @@ type apiResponse struct {
 	} `json:"build,omitempty"`
 	// workaround for deployments
 	// TODO: fix on platform
-	Events  []event `json:"events,omitempty"`
-	Command string  `json:"command,omitempty"`
+	Events    []event `json:"events,omitempty"`
+	Command   string  `json:"command,omitempty"`
+	IPAddress string  `json:"ip_address,omitempty"`
 }
 
 type event struct {

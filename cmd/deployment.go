@@ -41,11 +41,20 @@ your command instead. The two forms are equivalent:
 	Run: startDeployment,
 }
 
+var deploymentCmdConnect = &cobra.Command{
+	Use:     "connect id",
+	Aliases: []string{"c", "connects"},
+	Short:   "Connect to a running deployment",
+	Long:    "Connect to a running deployment",
+	Run:     connectDeployment,
+}
+
 func init() {
 	deploymentCmdStart.PersistentFlags().BoolVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
 	deploymentCmd := genDevCommand("deployment", "d", "dep", "deps", "deployments")
 	deploymentCmd.AddCommand(deploymentCmdStart)
+	deploymentCmd.AddCommand(deploymentCmdConnect)
 
 	RootCmd.AddCommand(deploymentCmd)
 }
@@ -67,4 +76,13 @@ func startDeployment(cmd *cobra.Command, args []string) {
 		exitWithError(err)
 	}
 	logger.Std.Println(out)
+}
+
+func connectDeployment(cmd *cobra.Command, args []string) {
+	if len(args) == 0 {
+		exitWithError("deployment id required")
+	}
+	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0]); err != nil {
+		exitWithError(err)
+	}
 }

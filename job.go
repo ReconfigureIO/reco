@@ -24,13 +24,18 @@ type Job interface {
 
 // jobInfo gives information about a build.
 type jobInfo struct {
-	ID       string
-	Time     time.Time
-	Duration time.Duration
-	Status   string
-	Project  string
-	Command  string
-	Build    string
+	ID        string
+	Time      time.Time
+	Duration  time.Duration
+	Status    string
+	Project   string
+	Command   string
+	Build     string
+	IPAddress string
+}
+
+func (job jobInfo) IsCompleted() bool {
+	return isCompleted(job.Status)
 }
 
 // UnmarshalJSON customizes JSON decoding for BuildInfo.
@@ -50,6 +55,7 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 	ji.Status = "unstarted"
 	ji.Project = str.Project.Name
 	ji.Command = str.Command
+	ji.IPAddress = str.IPAddress
 	if str.Build.ID != "" {
 		ji.Build = str.Build.ID
 	}
