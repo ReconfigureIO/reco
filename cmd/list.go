@@ -41,6 +41,9 @@ func genListSubcommand(name string) *cobra.Command {
 			if listVars.allProjects {
 				filters["all"] = "1"
 			}
+			if listVars.public {
+				filters["public"] = "1"
+			}
 
 			listVars.resourceType = name
 			l := reflect.ValueOf(tool).MethodByName(strings.Title(name)).Call(nil)[0].Interface()
