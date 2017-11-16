@@ -443,7 +443,7 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 		request.queryParam("project", projectID)
 	}
 
-	if !filters.Bool("public") {
+	if filters.Bool("public") {
 		request.queryParam("public", "true")
 	}
 
