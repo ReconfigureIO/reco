@@ -22,6 +22,7 @@ var listVars struct {
 	limit       int
 	status      string
 	allProjects bool
+	public      bool
 }
 
 func genListSubcommand(name string) *cobra.Command {
