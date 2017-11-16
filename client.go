@@ -443,6 +443,10 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 		request.queryParam("project", projectID)
 	}
 
+	if !filters.Bool("public") {
+		request.queryParam("public", "true")
+	}
+
 	resp, err := request.Do("GET", nil)
 	if err != nil {
 		return nil, err
