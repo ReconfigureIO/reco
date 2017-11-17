@@ -434,13 +434,18 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 
 	request := p.apiRequest(endpoint)
 
-	// if all-projects flag is not set, use specific project.
-	if !filters.Bool("all") {
+	// if all-projects flag is not set,
+	// and public flag not set, use specific project.
+	if !filters.Bool("all") && !filters.Bool("public") {
 		projectID, err := p.projectID()
 		if err != nil {
 			return nil, err
 		}
 		request.queryParam("project", projectID)
+	}
+
+	if filters.Bool("public") {
+		request.queryParam("public", "true")
 	}
 
 	resp, err := request.Do("GET", nil)

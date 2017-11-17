@@ -22,6 +22,7 @@ var listVars struct {
 	limit       int
 	status      string
 	allProjects bool
+	public      bool
 }
 
 func genListSubcommand(name string) *cobra.Command {
@@ -40,6 +41,9 @@ func genListSubcommand(name string) *cobra.Command {
 			}
 			if listVars.allProjects {
 				filters["all"] = "1"
+			}
+			if listVars.public {
+				filters["public"] = "1"
 			}
 
 			listVars.resourceType = name
@@ -80,7 +84,7 @@ func listCmdAddFlags(listCmd *cobra.Command) {
 	listCmd.PersistentFlags().IntVarP(&listVars.limit, "limit", "l", listVars.limit, "limit the number of results")
 	listCmd.PersistentFlags().StringVar(&listVars.status, "status", listVars.status, "filter result by status")
 	listCmd.PersistentFlags().BoolVar(&listVars.allProjects, "all-projects", listVars.allProjects, "list for all projects")
-
+	listCmd.PersistentFlags().BoolVar(&listVars.public, "public", listVars.public, "list for public items")
 }
 
 type lister interface {
