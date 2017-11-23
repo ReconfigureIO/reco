@@ -501,7 +501,7 @@ func (p clientImpl) stopJob(eventType string, id string) error {
 	}
 	req := p.apiRequest(endpoint)
 	req.param("id", id)
-	reqBody := M{"status": "TERMINATED"}
+	reqBody := M{"status": "TERMINATING"}
 	resp, err := req.Do("POST", reqBody)
 	if err != nil {
 		return err
