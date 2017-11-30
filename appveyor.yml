@@ -35,13 +35,13 @@ test_script:
   - make test
 
 after_test:
-  - go build -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
+  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
+  - go build -ldflags "-X 'main.version=%VERSION%' -X 'main.buildTime=%APPVEYOR_REPO_COMMIT_TIMESTAMP%' -X 'main.builder=Appveyor' -X 'main.goversion=%GOVERSION%'" -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
   - C:\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array
   - C:\reco.exe check --source C:\reco-examples\histogram-parallel
-  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
   - copy C:\reco.exe C:\gopath\src\github.com\ReconfigureIO\reco\nsis
   - cd C:\gopath\src\github.com\ReconfigureIO\reco\nsis && "C:\Program Files (x86)\NSIS\makensis.exe" reco.nsi
   - appveyor PushArtifact C:\gopath\src\github.com\ReconfigureIO\reco\nsis\reco-%VERSION%.exe
