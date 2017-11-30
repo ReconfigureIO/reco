@@ -16,27 +16,22 @@ init:
 install:
   # Install the specific Go version.
   - rmdir c:\go /s /q
-  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
-  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
-  - set Path=c:\go\bin;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Git\mingw64\bin;%PATH%
-  - go version
-  - go env
   - choco install make
   - choco install nsis
-  - appveyor DownloadFile https://github.com/Masterminds/glide/releases/download/v0.11.1/glide-v0.11.1-windows-amd64.zip
-  - powershell Expand-Archive -Path glide-v0.11.1-windows-amd64.zip -DestinationPath C:\Glide
-  - copy C:\Glide\windows-amd64\glide.exe c:\gopath\bin
-  - cd C:\gopath\src\github.com\ReconfigureIO\reco && C:\Glide\windows-amd64\glide.exe install
+  - choco install docker-compose
   - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
 
 build_script: 
-  - make VERSION="%APPVEYOR_REPO_TAG_NAME" GOOS="windows" TARGET="x86_64-pc-windows" GO_EXTENSION=".exe" packages
+  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
+  - docker-compose run --rm go make clean dependencies
+  - docker-compose run --rm go make test benchmark integration
+  - docker-compose run go ./ci/cross_compile.sh %VERSION%
 
 test_script:
   - make test
 
 after_test:
-  - .\dist\reco.exe version
+  - dist\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array
