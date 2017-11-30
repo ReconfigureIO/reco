@@ -9,10 +9,6 @@ environment:
   GOPATH: c:\gopath
   GOVERSION: 1.9.1
   VERSION: master
-  LDFLAGS:
-    - -X 'main.buildTime=%buildtime%'
-    - -X 'main.builder=appveyor'
-    - -X 'main.goversion=%GOVERSION%'
 
 init:
   - git config --global core.autocrlf input
@@ -40,7 +36,7 @@ test_script:
 
 after_test:
   - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
-  - go build -ldflags "%LDFLAGS%" -X 'main.version=%VERSION%' -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
+  - go build -ldflags -X 'main.version=%VERSION%' -X 'main.buildTime=%APPVEYOR_REPO_COMMIT_TIMESTAMP%' -X 'main.builder=Appveyor' -X 'main.goversion=%GOVERSION%' -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
   - C:\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
