@@ -36,7 +36,7 @@ test_script:
 
 after_test:
   - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
-  - go build -ldflags -X 'main.version=%VERSION%' -X 'main.buildTime=%APPVEYOR_REPO_COMMIT_TIMESTAMP%' -X 'main.builder=Appveyor' -X 'main.goversion=%GOVERSION%' -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
+  - go build -ldflags "-X 'main.version=%VERSION%' -X 'main.buildTime=%APPVEYOR_REPO_COMMIT_TIMESTAMP%' -X 'main.builder=Appveyor' -X 'main.goversion=%GOVERSION%'" -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
   - C:\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
