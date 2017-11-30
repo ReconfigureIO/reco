@@ -29,14 +29,14 @@ install:
   - cd C:\gopath\src\github.com\ReconfigureIO\reco && C:\Glide\windows-amd64\glide.exe install
   - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
 
-build: off
+build: 
+  - make VERSION="%APPVEYOR_REPO_TAG_NAME" GOOS="windows" TARGET="x86_64-pc-windows" GO_EXTENSION=".exe" packages
 
 test_script:
   - make test
 
 after_test:
-  - go build -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
-  - C:\reco.exe version
+  - .\dist\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array
