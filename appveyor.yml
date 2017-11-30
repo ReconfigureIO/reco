@@ -9,6 +9,10 @@ environment:
   GOPATH: c:\gopath
   GOVERSION: 1.9.1
   VERSION: master
+  LDFLAGS:
+    - -X 'main.buildTime=%buildtime%'
+    - -X 'main.builder=appveyor'
+    - -X 'main.goversion=%GOVERSION%'
 
 init:
   - git config --global core.autocrlf input
@@ -16,27 +20,32 @@ init:
 install:
   # Install the specific Go version.
   - rmdir c:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
+  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
+  - set Path=c:\go\bin;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Git\mingw64\bin;%PATH%
+  - go version
+  - go env
   - choco install make
   - choco install nsis
-  - choco install docker-compose
+  - appveyor DownloadFile https://github.com/Masterminds/glide/releases/download/v0.11.1/glide-v0.11.1-windows-amd64.zip
+  - powershell Expand-Archive -Path glide-v0.11.1-windows-amd64.zip -DestinationPath C:\Glide
+  - copy C:\Glide\windows-amd64\glide.exe c:\gopath\bin
+  - cd C:\gopath\src\github.com\ReconfigureIO\reco && C:\Glide\windows-amd64\glide.exe install
   - git clone https://github.com/ReconfigureIO/examples C:\reco-examples
 
-build_script: 
-  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
-  - docker-compose run --rm go make clean dependencies
-  - docker-compose run --rm go make test benchmark integration
-  - docker-compose run go ./ci/cross_compile.sh %VERSION%
+build: off
 
 test_script:
   - make test
 
 after_test:
-  - dist\reco.exe version
+  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
+  - go build -ldflags "%LDFLAGS%" -X 'main.version=%VERSION%' -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
+  - C:\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
   - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array
   - C:\reco.exe check --source C:\reco-examples\histogram-parallel
-  - if %APPVEYOR_REPO_TAG% equ true set VERSION=%APPVEYOR_REPO_TAG_NAME%
   - copy C:\reco.exe C:\gopath\src\github.com\ReconfigureIO\reco\nsis
   - cd C:\gopath\src\github.com\ReconfigureIO\reco\nsis && "C:\Program Files (x86)\NSIS\makensis.exe" reco.nsi
   - appveyor PushArtifact C:\gopath\src\github.com\ReconfigureIO\reco\nsis\reco-%VERSION%.exe
