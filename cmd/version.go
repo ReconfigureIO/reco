@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"strings"
-
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/spf13/cobra"
 )
