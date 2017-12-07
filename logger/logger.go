@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/briandowns/spinner"
+	"github.com/ReconfigureIO/reco/spinner"
 )
 
 const timeFormat = "2006-01-02 15:04:05"
@@ -106,7 +106,7 @@ type logSpinner struct {
 
 // newSpinner creates a new Spinner.
 func newSpinner(writer io.Writer) *logSpinner {
-	sp := spinner.New([]string{"", ".", "..", "..."}, 500*time.Millisecond)
+	sp := spinner.New([]string{"."}, 2*time.Second)
 	sp.Writer = writer
 	sp.Prefix = " "
 	return &logSpinner{
