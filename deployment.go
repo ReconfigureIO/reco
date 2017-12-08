@@ -27,9 +27,6 @@ type deploymentJob struct {
 }
 
 func (p deploymentJob) Start(args Args) (string, error) {
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
-
 	buildID := String(args.At(0))
 	command := String(args.At(1))
 	wait := Bool(args.Last())
