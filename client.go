@@ -224,9 +224,6 @@ func decodeJSON(r io.Reader, body interface{}) error {
 }
 
 func (p clientImpl) logJob(eventType string, id string) error {
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
-
 	logger.Info.Println("streaming logs for ", eventType, " ", id)
 	return p.logs(eventType, id)
 }

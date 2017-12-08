@@ -42,9 +42,6 @@ func (p testJob) Start(args Args) (string, error) {
 	cmd := String(args.At(1))
 	cmdArgs := StringSlice(args.At(2))
 
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
-
 	if len(cmdArgs) > 0 {
 		cmd += " " + strings.Join(cmdArgs, " ")
 	}

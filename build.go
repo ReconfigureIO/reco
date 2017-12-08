@@ -40,9 +40,6 @@ func (b buildJob) Start(args Args) (string, error) {
 	srcDir := String(args.At(0))
 	wait := Bool(args.At(1))
 
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
-
 	logger.Info.Println("preparing build")
 	id, err := b.prepareBuild()
 	if err != nil {

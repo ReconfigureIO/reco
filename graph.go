@@ -50,8 +50,6 @@ func (b platformGraph) prepareGraph() (string, error) {
 func (p platformGraph) Generate(args Args) (string, error) {
 	srcDir := String(args.At(0))
 	wait := Bool(args.At(1))
-	logger.Info.ShowSpinner(true)
-	defer logger.Info.ShowSpinner(false)
 
 	logger.Info.Println("preparing graph")
 	id, err := p.prepareGraph()

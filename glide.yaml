@@ -4,7 +4,6 @@ import:
 - package: github.com/spf13/cobra
 - package: github.com/spf13/viper
 - package: github.com/pkg/sftp
-- package: github.com/briandowns/spinner
 - package: github.com/olekukonko/ts
 - package: github.com/olekukonko/tablewriter
 - package: github.com/dustin/go-humanize
