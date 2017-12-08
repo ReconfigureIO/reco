@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"strings"
-
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/spf13/cobra"
 )
@@ -30,8 +28,8 @@ func version(cmd *cobra.Command, args []string) {
 		return
 	}
 	logger.Std.Println("reco version: ", BuildInfo.Version)
-	if goVersion := strings.Fields(BuildInfo.GoVersion); len(goVersion) > 3 {
-		logger.Std.Println("Go version: ", goVersion[2])
+	if BuildInfo.GoVersion != "" {
+		logger.Std.Println("Go version: ", BuildInfo.GoVersion)
 	}
 	if BuildInfo.BuildTime != "" {
 		logger.Std.Println("Build Time: ", BuildInfo.BuildTime)
