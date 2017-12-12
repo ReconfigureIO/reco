@@ -47,6 +47,29 @@ var (
 	errInvalidToken      = errors.New("the token is invalid")
 	errUnknownError      = errors.New("unknown error occurred")
 	errBadResponse       = errors.New("bad response from server")
+
+	// StatusSubmitted is submitted job state.
+	StatusSubmitted = []string{"SUBMITTED", "submitted"}
+	// StatusQueued is queued job state.
+	StatusQueued = []string{"QUEUED", "queued"}
+	// StatusCreatingImage is creating image job state.
+	StatusCreatingImage = []string{"CREATING_IMAGE", "creating_image"}
+	// StatusStarted is started job state.
+	StatusStarted = []string{"STARTED", "started"}
+	// StatusTerminating is terminating job state.
+	StatusTerminating = []string{"TERMINATING", "terminating"}
+	// StatusTerminated is terminated job state.
+	StatusTerminated = []string{"TERMINATED", "terminated"}
+	// StatusCompleted is completed job state.
+	StatusCompleted = []string{"COMPLETED", "completed"}
+	// StatusErrored is errored job state.
+	StatusErrored = []string{"ERRORED", "errored"}
+	// StatusWaiting is waiting for events state
+	StatusWaiting     = "Waiting"
+	JobTypeBuild      = "build"
+	JobTypeDeployment = "deployment"
+	JobTypeSimulation = "simulation"
+	JobTypeGraph      = "graph"
 )
 
 // Client is a reconfigure.io platform client.
@@ -232,22 +255,17 @@ func (p clientImpl) waitAndLog(jobType string, id string) error {
 	logger.Info.Println(`you can run "reco `, jobType, " log ", id, `" to manually stream logs`)
 	logger.Info.Println("getting ", jobType, " details")
 	getStatus := func() string {
-		var status = "WAITING"
 		job, err := p.getJob(jobType, id)
 		if err == nil && job.Status != "" {
 			return job.Status
 		}
-		return status
+		return StatusWaiting
 	}
 
 	status := getStatus()
 	logger.Info.Println("status: ", status)
 
-	if status != "WAITING" && status != "QUEUED" {
-		return p.logs(jobType, id)
-	}
-
-	if jobType == "" || jobType == "build" {
+	if jobType == "" || jobType == JobTypeBuild {
 		logger.Info.Println("this will take at least 4 hours")
 	} else {
 		logger.Info.Println("this may take several minutes")
@@ -278,9 +296,9 @@ func (p clientImpl) getJob(jobType string, id string) (jobInfo, error) {
 	}
 	var endpoint string
 	switch jobType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Item()
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.Item()
 	default:
 		endpoint = endpoints.builds.Item()
@@ -301,9 +319,9 @@ func (p clientImpl) getJob(jobType string, id string) (jobInfo, error) {
 func (p clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, error) {
 	var endpoint string
 	switch jobType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Log()
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.Log()
 	default:
 		endpoint = endpoints.builds.Log()
@@ -342,9 +360,9 @@ func (p clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, er
 func (p clientImpl) uploadJob(jobType string, id string, srcArchive string) error {
 	var endpoint string
 	switch jobType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Input()
-	case "graph":
+	case JobTypeGraph:
 		endpoint = endpoints.graphs.Input()
 	default:
 		endpoint = endpoints.builds.Input()
@@ -419,11 +437,11 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 
 	var endpoint string
 	switch jobType {
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.String()
-	case "simulation", "test":
+	case JobTypeSimulation, "test":
 		endpoint = endpoints.simulations.String()
-	case "graph":
+	case JobTypeGraph:
 		endpoint = endpoints.graphs.String()
 	default:
 		endpoint = endpoints.builds.String()
@@ -471,27 +489,27 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 }
 
 func (p clientImpl) listBuilds(filters M) ([]jobInfo, error) {
-	return p.listJobs("build", filters)
+	return p.listJobs(JobTypeBuild, filters)
 }
 
 func (p clientImpl) listDeployments(filters M) ([]jobInfo, error) {
-	return p.listJobs("deployment", filters)
+	return p.listJobs(JobTypeDeployment, filters)
 }
 
 func (p clientImpl) listTests(filters M) ([]jobInfo, error) {
-	return p.listJobs("simulation", filters)
+	return p.listJobs(JobTypeSimulation, filters)
 }
 
 func (p clientImpl) listGraphs(filters M) ([]jobInfo, error) {
-	return p.listJobs("graph", filters)
+	return p.listJobs(JobTypeGraph, filters)
 }
 
 func (p clientImpl) stopJob(eventType string, id string) error {
 	var endpoint string
 	switch eventType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Events()
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.Events()
 	default:
 		endpoint = endpoints.builds.Events()
@@ -507,4 +525,13 @@ func (p clientImpl) stopJob(eventType string, id string) error {
 		return errUnknownError
 	}
 	return nil
+}
+
+func inSlice(slice []string, val string) bool {
+	for _, v := range slice {
+		if val == v {
+			return true
+		}
+	}
+	return false
 }
