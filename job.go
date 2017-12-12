@@ -160,7 +160,7 @@ func (job jobInfo) IsStarted() bool {
 // isCompleted checks if the status is a final status.
 func isStarted(status string) bool {
 	switch strings.ToUpper(status) {
-	case StatusCompleted, StatusErrored, StatusTerminated, StatusStarted:
+	case StatusCompleted, StatusErrored, StatusTerminated, StatusTerminating, StatusStarted, StatusCreatingImage:
 		return true
 	}
 	return false

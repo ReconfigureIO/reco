@@ -32,28 +32,11 @@ const (
 	platformServerAddress = "https://api.reconfigure.io"
 	platformAuthFile      = "auth.json"
 	platformProjectFile   = "project.json"
-	// StatusSubmitted is submitted job state.
-	StatusSubmitted = "SUBMITTED"
-	// StatusQueued is queued job state.
-	StatusQueued = "QUEUED"
-	// StatusCreatingImage is creating image job state.
-	StatusCreatingImage = "CREATING_IMAGE"
-	// StatusStarted is started job state.
-	StatusStarted = "STARTED"
-	// StatusTerminating is terminating job state.
-	StatusTerminating = "TERMINATING"
-	// StatusTerminated is terminated job state.
-	StatusTerminated = "TERMINATED"
-	// StatusCompleted is completed job state.
-	StatusCompleted = "COMPLETED"
-	// StatusErrored is errored job state.
-	StatusErrored = "ERRORED"
-	// StatusWaiting is waiting for events state
-	StatusWaiting     = "WAITING"
-	JobTypeBuild      = "build"
-	JobTypeDeployment = "deployment"
-	JobTypeSimulation = "simulation"
-	JobTypeGraph      = "graph"
+	StatusWaiting         = "WAITING"
+	JobTypeBuild          = "build"
+	JobTypeDeployment     = "deployment"
+	JobTypeSimulation     = "simulation"
+	JobTypeGraph          = "graph"
 )
 
 var (
