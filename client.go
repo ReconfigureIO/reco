@@ -265,10 +265,6 @@ func (p clientImpl) waitAndLog(jobType string, id string) error {
 	status := getStatus()
 	logger.Info.Println("status: ", status)
 
-	if status != StatusWaiting && !inSlice(StatusQueued, status) {
-		return p.logs(jobType, id)
-	}
-
 	if jobType == "" || jobType == JobTypeBuild {
 		logger.Info.Println("this will take at least 4 hours")
 	} else {
@@ -364,9 +360,9 @@ func (p clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, er
 func (p clientImpl) uploadJob(jobType string, id string, srcArchive string) error {
 	var endpoint string
 	switch jobType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Input()
-	case "graph":
+	case JobTypeGraph:
 		endpoint = endpoints.graphs.Input()
 	default:
 		endpoint = endpoints.builds.Input()
@@ -441,11 +437,11 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 
 	var endpoint string
 	switch jobType {
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.String()
-	case "simulation", "test":
+	case JobTypeSimulation, "test":
 		endpoint = endpoints.simulations.String()
-	case "graph":
+	case JobTypeGraph:
 		endpoint = endpoints.graphs.String()
 	default:
 		endpoint = endpoints.builds.String()
@@ -493,27 +489,27 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 }
 
 func (p clientImpl) listBuilds(filters M) ([]jobInfo, error) {
-	return p.listJobs("build", filters)
+	return p.listJobs(JobTypeBuild, filters)
 }
 
 func (p clientImpl) listDeployments(filters M) ([]jobInfo, error) {
-	return p.listJobs("deployment", filters)
+	return p.listJobs(JobTypeDeployment, filters)
 }
 
 func (p clientImpl) listTests(filters M) ([]jobInfo, error) {
-	return p.listJobs("simulation", filters)
+	return p.listJobs(JobTypeSimulation, filters)
 }
 
 func (p clientImpl) listGraphs(filters M) ([]jobInfo, error) {
-	return p.listJobs("graph", filters)
+	return p.listJobs(JobTypeGraph, filters)
 }
 
 func (p clientImpl) stopJob(eventType string, id string) error {
 	var endpoint string
 	switch eventType {
-	case "simulation":
+	case JobTypeSimulation:
 		endpoint = endpoints.simulations.Events()
-	case "deployment":
+	case JobTypeDeployment:
 		endpoint = endpoints.deployments.Events()
 	default:
 		endpoint = endpoints.builds.Events()
