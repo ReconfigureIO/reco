@@ -71,7 +71,15 @@ func (p deploymentJob) Start(args Args) (string, error) {
 }
 
 func (p deploymentJob) Stop(id string) error {
-	return p.clientImpl.stopJob("deployment", id)
+	resp, err := p.clientImpl.getJob("deployment", id)
+	if err != nil {
+		return err
+	}
+	if !resp.IsCompleted() {
+		return p.clientImpl.stopJob("deployment", id)
+	} else {
+		return nil
+	}
 }
 
 func (p deploymentJob) List(filter M) (printer.Table, error) {
