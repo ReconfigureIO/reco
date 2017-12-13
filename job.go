@@ -22,6 +22,26 @@ type Job interface {
 	Log(id string, writer io.Writer) error
 }
 
+var (
+	// StatusSubmitted is submitted job state.
+	StatusSubmitted = "SUBMITTED"
+	// StatusQueued is queued job state.
+	StatusQueued = "QUEUED"
+	// StatusCreatingImage is creating image job state.
+	StatusCreatingImage = "CREATING_IMAGE"
+	// StatusStarted is started job state.
+	StatusStarted = "STARTED"
+	// StatusTerminating is terminating job state.
+	StatusTerminating = "TERMINATING"
+	// StatusTerminated is terminated job state.
+	StatusTerminated = "TERMINATED"
+	// StatusCompleted is completed job state.
+	StatusCompleted = "COMPLETED"
+	// StatusErrored is errored job state.
+	StatusErrored = "ERRORED"
+	// StatusWaiting is waiting for events state
+)
+
 // jobInfo gives information about a build.
 type jobInfo struct {
 	ID        string
@@ -32,10 +52,6 @@ type jobInfo struct {
 	Command   string
 	Build     string
 	IPAddress string
-}
-
-func (job jobInfo) IsCompleted() bool {
-	return isCompleted(job.Status)
 }
 
 // UnmarshalJSON customizes JSON decoding for BuildInfo.
@@ -127,7 +143,24 @@ func (e eventSorter) Completed() bool {
 // isCompleted checks if the status is a final status.
 func isCompleted(status string) bool {
 	switch strings.ToUpper(status) {
-	case "COMPLETED", "ERRORED", "TERMINATED":
+	case StatusCompleted, StatusErrored, StatusTerminated:
+		return true
+	}
+	return false
+}
+
+func (job jobInfo) IsCompleted() bool {
+	return isCompleted(job.Status)
+}
+
+func (job jobInfo) IsStarted() bool {
+	return isStarted(job.Status)
+}
+
+// isCompleted checks if the status is a final status.
+func isStarted(status string) bool {
+	switch strings.ToUpper(status) {
+	case StatusCompleted, StatusErrored, StatusTerminated, StatusTerminating, StatusStarted, StatusCreatingImage:
 		return true
 	}
 	return false

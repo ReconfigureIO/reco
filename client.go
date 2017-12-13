@@ -32,6 +32,11 @@ const (
 	platformServerAddress = "https://api.reconfigure.io"
 	platformAuthFile      = "auth.json"
 	platformProjectFile   = "project.json"
+	StatusWaiting         = "WAITING"
+	JobTypeBuild          = "build"
+	JobTypeDeployment     = "deployment"
+	JobTypeSimulation     = "simulation"
+	JobTypeGraph          = "graph"
 )
 
 var (
@@ -47,29 +52,6 @@ var (
 	errInvalidToken      = errors.New("the token is invalid")
 	errUnknownError      = errors.New("unknown error occurred")
 	errBadResponse       = errors.New("bad response from server")
-
-	// StatusSubmitted is submitted job state.
-	StatusSubmitted = []string{"SUBMITTED", "submitted"}
-	// StatusQueued is queued job state.
-	StatusQueued = []string{"QUEUED", "queued"}
-	// StatusCreatingImage is creating image job state.
-	StatusCreatingImage = []string{"CREATING_IMAGE", "creating_image"}
-	// StatusStarted is started job state.
-	StatusStarted = []string{"STARTED", "started"}
-	// StatusTerminating is terminating job state.
-	StatusTerminating = []string{"TERMINATING", "terminating"}
-	// StatusTerminated is terminated job state.
-	StatusTerminated = []string{"TERMINATED", "terminated"}
-	// StatusCompleted is completed job state.
-	StatusCompleted = []string{"COMPLETED", "completed"}
-	// StatusErrored is errored job state.
-	StatusErrored = []string{"ERRORED", "errored"}
-	// StatusWaiting is waiting for events state
-	StatusWaiting     = "Waiting"
-	JobTypeBuild      = "build"
-	JobTypeDeployment = "deployment"
-	JobTypeSimulation = "simulation"
-	JobTypeGraph      = "graph"
 )
 
 // Client is a reconfigure.io platform client.
@@ -254,6 +236,7 @@ func (p clientImpl) logJob(eventType string, id string) error {
 func (p clientImpl) waitAndLog(jobType string, id string) error {
 	logger.Info.Println(`you can run "reco `, jobType, " log ", id, `" to manually stream logs`)
 	logger.Info.Println("getting ", jobType, " details")
+
 	getStatus := func() string {
 		job, err := p.getJob(jobType, id)
 		if err == nil && job.Status != "" {
@@ -516,7 +499,7 @@ func (p clientImpl) stopJob(eventType string, id string) error {
 	}
 	req := p.apiRequest(endpoint)
 	req.param("id", id)
-	reqBody := M{"status": "TERMINATING"}
+	reqBody := M{"status": StatusTerminating}
 	resp, err := req.Do("POST", reqBody)
 	if err != nil {
 		return err
