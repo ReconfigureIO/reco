@@ -55,7 +55,6 @@ integration: dependencies
 	/tmp/reco version
 	git clone "https://github.com/ReconfigureIO/examples" /tmp/examples
 	/tmp/reco check --source /tmp/examples/addition
-	/tmp/reco check --source /tmp/examples/histogram
 	/tmp/reco check --source /tmp/examples/histogram-array
 	/tmp/reco check --source /tmp/examples/histogram-parallel
 
