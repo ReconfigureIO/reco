@@ -1,32 +1,30 @@
-hash: 4f0c85996a4ae57935b2fc519d7d44e8b8828ba41b02390b16c5bedec4eb4bfe
-updated: 2017-11-10T20:07:52.217974726Z
+hash: 6b507ad5b656252ddae43abd00f664d2a4543c7366d7b7bf0a8e99037de70d6b
+updated: 2017-12-21T19:53:44.0698Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
   subpackages:
   - env
-- name: github.com/briandowns/spinner
-  version: fb621c2fd72fdd729f857e6d9c3a990e43fef910
 - name: github.com/dsnet/compress
-  version: b9aab3c6a04eef14c56384b4ad065e7b73438862
+  version: cc9eb1d7ad760af14e8f918698f745e80377af4f
   subpackages:
   - bzip2
   - bzip2/internal/sais
   - internal
+  - internal/errors
   - internal/prefix
 - name: github.com/dustin/go-humanize
-  version: 259d2a102b871d17f30e3cd9881a642961a1e486
-- name: github.com/fatih/color
-  version: 9131ab34cf20d2f6d83fdc67168a5430d1c7dc23
+  version: bb3d318650d48840a39aa21a027c6630e198e626
 - name: github.com/fsnotify/fsnotify
   version: 4da3e2cfbabc9f751898f250b49f2439785783a1
 - name: github.com/golang/snappy
   version: 553a641470496b2327abcac10b36396bd98e45c9
 - name: github.com/hashicorp/hcl
-  version: 7fa7fff964d035e8a162cce3a164b3ad02ad651b
+  version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
   subpackages:
   - hcl/ast
   - hcl/parser
+  - hcl/printer
   - hcl/scanner
   - hcl/strconv
   - hcl/token
@@ -36,72 +34,64 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/magiconair/properties
-  version: 51463bfca2576e06c62a8504b5c0f06d61312647
-- name: github.com/mattn/go-colorable
-  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
-  repo: https://github.com/mattn/go-colorable
-- name: github.com/mattn/go-isatty
-  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
-  repo: https://github.com/mattn/go-isatty
+  version: 49d762b9817ba1c2e9d0c69183c2b4a8b8f1d934
 - name: github.com/mattn/go-runewidth
-  version: 14207d285c6c197daabb5c9793d63e7af9ab2d50
+  version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
 - name: github.com/mholt/archiver
-  version: c55f48c22890807c9698370fe5e08eca3704834b
+  version: 26cf5bb32d07aa4e8d0de15f56ce516f4641d7df
 - name: github.com/mitchellh/ioprogress
   version: 8163955264568045f462ae7e2d6d07b2001fc997
 - name: github.com/mitchellh/mapstructure
-  version: cc8532a8e9a55ea36402aa21efdf403a60d34096
+  version: 06020f85339e21b2478f756a78e295255ffa4d6a
 - name: github.com/nwaples/rardecode
-  version: f22b7ef81a0afac9ce1447d37e5ab8e99fbd2f73
+  version: e06696f847aeda6f39a8f0b7cdff193b7690aef6
 - name: github.com/olekukonko/tablewriter
-  version: febf2d34b54a69ce7530036c7503b1c9fbfdf0bb
+  version: 65fec0d89a572b4367094e2058d3ebe667de3b60
 - name: github.com/olekukonko/ts
-  version: ecf753e7c962639ab5a1fb46f7da627d4c0a04b8
-- name: github.com/pelletier/go-buffruneio
-  version: c37440a7cf42ac63b919c752ca73a85067e05992
+  version: 78ecb04241c0121483589a30b0814836a746187d
 - name: github.com/pelletier/go-toml
-  version: 97253b98df84f9eef872866d079e74b8265150f1
+  version: b8b5e7696574464b2f9bf303a7b37781bb52889f
 - name: github.com/pierrec/lz4
-  version: f5b77fd73d83122495309c0f459b810f83cc291f
+  version: 2fcda4cb7018ce05a25959d2fe08c83e3329f169
 - name: github.com/pierrec/xxHash
-  version: 5a004441f897722c627870a981d02b29924215fa
+  version: a0006b13c722f7f12368c00a3d3c2ae8a999a0c6
   subpackages:
   - xxHash32
 - name: github.com/pkg/sftp
-  version: dddd9cf3c7889aa0fefd2e8a529367a3e1f3b669
+  version: 1d5374a61d4959af383169ff31db1cd752c2d69a
 - name: github.com/skratchdot/open-golang
   version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
   subpackages:
   - open
 - name: github.com/spf13/afero
-  version: 9be650865eab0c12963d8753212f4f9c66cdcf12
+  version: 8d919cbe7e2627e417f3e45c3c0e489a5b7e2536
   subpackages:
   - mem
 - name: github.com/spf13/cast
   version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
 - name: github.com/spf13/cobra
-  version: 8f0203be891287870100e4af46262cdf4a4261d1
+  version: ccaecb155a2177302cb56cae929251a256d0f646
 - name: github.com/spf13/jwalterweatherman
-  version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
+  version: 12bd96e66386c1960ab0f74ced1362f66f552f7b
 - name: github.com/spf13/pflag
-  version: c990990ab4981d84da820b7b00c85139ca150b5f
+  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
 - name: github.com/spf13/viper
-  version: 0967fc9aceab2ce9da34061253ac10fb99bba5b2
+  version: 1a0c4a370c3e8286b835467d2dfcdaf636c3538b
 - name: github.com/ulikunitz/xz
-  version: 3807218c9f4ed05861fa9eb75b8fb8afd3325a34
+  version: 0c6b41e72360850ca4f98dc341fd999726ea007f
   subpackages:
   - internal/hash
   - internal/xlog
   - lzma
 - name: golang.org/x/sys
-  version: f3918c30c5c2cb527c0b071a27c35120a6c0719a
+  version: d818ba11af4465e00c1998bd3f8a55603b422290
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 470f45bf29f4147d6fbd7dfd0a02a848e49f5bf4
+  version: eb22672bea55af56d225d4e35405f4d2e9f062a0
   subpackages:
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
+  version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
 testImports: []
