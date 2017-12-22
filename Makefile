@@ -20,7 +20,7 @@ LDFLAGS := -X 'main.version=$(VERSION)' \
 CODEBUILD_NAME := "sample-snap-builder"
 GO_EXTENSION :=
 
-.PHONY: fmt dependencies test coverage benchmark packages
+.PHONY: fmt dependencies test coverage benchmark packages integration integration-real 
 
 all: dependencies test packages
 
@@ -51,12 +51,17 @@ dependencies:
 	glide install
 
 integration: dependencies
-	go build -o /tmp/reco ./cmd/reco
-	/tmp/reco version
-	git clone "https://github.com/ReconfigureIO/examples" /tmp/examples
-	/tmp/reco check --source /tmp/examples/addition
-	/tmp/reco check --source /tmp/examples/histogram-array
-	/tmp/reco check --source /tmp/examples/histogram-parallel
+	@tmpdir=`mktemp -d`; \
+	trap 'rm -rf "$$tmpdir"' EXIT; \
+	$(MAKE) integration-real TMPDIR=$$tmpdir 
+
+integration-real: 
+	go build -o $(TMPDIR)/reco ./cmd/reco
+	$(TMPDIR)/reco version
+	git clone "https://github.com/ReconfigureIO/examples" $(TMPDIR)/examples
+	$(TMPDIR)/reco check --source $(TMPDIR)/examples/addition
+	$(TMPDIR)/reco check --source $(TMPDIR)/examples/histogram-array
+	$(TMPDIR)/reco check --source $(TMPDIR)/examples/histogram-parallel
 
 CMD_SOURCES := $(shell find cmd -name main.go)
 TARGETS := $(patsubst cmd/%/main.go,build/${TARGET}/%,$(CMD_SOURCES))
