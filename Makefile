@@ -27,36 +27,36 @@ all: dependencies test packages
 dist:
 	mkdir -p $@
 
-build/${TARGET}:
-	mkdir -p $@
+	build/${TARGET}:
+		mkdir -p $@
 
-# development tasks
-fmt:
-	go fmt -x $$(go list ./... | grep -v /vendor/)
+	# development tasks
+	fmt:
+		go fmt -x $$(go list ./... | grep -v /vendor/)
 
-test: fmt
-	go test -v $$(go list ./... | grep -v /vendor/ | grep -v /cmd/)
+	test: fmt
+		go test -v $$(go list ./... | grep -v /vendor/ | grep -v /cmd/)
 
-PACKAGES := $(shell find ./* -type d | grep -v vendor)
+	PACKAGES := $(shell find ./* -type d | grep -v vendor)
 
-coverage:
-	@go test -coverprofile=coverage.txt -covermode=atomic
-	@go tool cover -html=coverage.txt -o cover.html
+	coverage:
+		@go test -coverprofile=coverage.txt -covermode=atomic
+		@go tool cover -html=coverage.txt -o cover.html
 
-benchmark:
-	@echo "Running tests..."
-	@go test -bench=. $$(go list ./... | grep -v /vendor/ | grep -v /cmd/)
+	benchmark:
+		@echo "Running tests..."
+		@go test -bench=. $$(go list ./... | grep -v /vendor/ | grep -v /cmd/)
 
-dependencies:
-	glide install
+	dependencies:
+		glide install
 
-integration: dependencies
-	@tmpdir=`mktemp -d`; \
-	trap 'rm -rf "$$tmpdir"' EXIT; \
-	$(MAKE) integration-real TMPDIR=$$tmpdir 
+	integration: dependencies
+		@tmpdir=`mktemp -d`; \
+		trap 'rm -rf "$$tmpdir"' EXIT; \
+		$(MAKE) integration-real TMPDIR=$$tmpdir 
 
-integration-real: 
-	go build -o $(TMPDIR)/reco ./cmd/reco
+	integration-real: 
+		go build -o $(TMPDIR)/reco ./cmd/reco
 	$(TMPDIR)/reco version
 	git clone "https://github.com/ReconfigureIO/examples" $(TMPDIR)/examples
 	$(TMPDIR)/reco check --source $(TMPDIR)/examples/addition
@@ -67,7 +67,7 @@ CMD_SOURCES := $(shell find cmd -name main.go)
 TARGETS := $(patsubst cmd/%/main.go,build/${TARGET}/%,$(CMD_SOURCES))
 PKG_TARGETS := $(patsubst cmd/%/main.go,dist/%-${VERSION}-${TARGET}.zip,$(CMD_SOURCES))
 
-build/${TARGET}/%${GO_EXTENSION}: cmd/%/main.go | build/${TARGET}
+build/${TARGET}/%${GO_EXTENSION}: cmd/%/main.go cmd/*.go *.go | build/${TARGET}
 	GOOS=${GOOS} go build -ldflags "$(LDFLAGS)" -o $@ $<
 
 dist/%-${VERSION}-${TARGET}.zip: build/${TARGET}/%${GO_EXTENSION} | dist
