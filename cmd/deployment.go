@@ -55,6 +55,7 @@ func init() {
 	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(genLogSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genStopSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 
