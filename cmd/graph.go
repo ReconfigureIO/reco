@@ -45,7 +45,7 @@ func init() {
 	graphCmd.AddCommand(
 		graphCmdGenerate,
 		graphCmdOpen,
-		genListSubcommand("graph"),
+		genListSubcommand("graphs", "Graph"),
 	)
 
 	RootCmd.AddCommand(graphCmd)

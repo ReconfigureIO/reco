@@ -5,7 +5,6 @@ import (
 	"os"
 	"reflect"
 	"strconv"
-	"strings"
 
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
@@ -25,12 +24,12 @@ var listVars struct {
 	public      bool
 }
 
-func genListSubcommand(name string) *cobra.Command {
+func genListSubcommand(name string, job string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
-		Short:   fmt.Sprintf("List %ss for your account", name),
-		Long:    fmt.Sprintf("List %ss created by your account.", name),
+		Short:   fmt.Sprintf("List %s for your account", name),
+		Long:    fmt.Sprintf("List %s created by your account.", name),
 		Run: func(cmd *cobra.Command, args []string) {
 			filters := reco.M{}
 			if listVars.status != "" {
@@ -47,7 +46,7 @@ func genListSubcommand(name string) *cobra.Command {
 			}
 
 			listVars.resourceType = name
-			l := reflect.ValueOf(tool).MethodByName(strings.Title(name)).Call(nil)[0].Interface()
+			l := reflect.ValueOf(tool).MethodByName(job).Call(nil)[0].Interface()
 			listVars.table, listVars.err = l.(lister).List(filters)
 		},
 		PostRun: listPostRun,

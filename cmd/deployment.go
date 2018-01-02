@@ -53,6 +53,7 @@ func init() {
 	deploymentCmdStart.PersistentFlags().BoolVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
 	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
+	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 

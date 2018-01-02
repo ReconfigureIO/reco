@@ -35,6 +35,7 @@ func init() {
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "force build. Ignore source code validation.")
 
 	buildCmd := genDevCommand("build", "b", "builds")
+	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
 
 	RootCmd.AddCommand(buildCmd)
