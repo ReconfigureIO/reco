@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"strings"
 	"time"
 
@@ -141,7 +142,11 @@ func (p deploymentJob) Connect(id string) error {
 		}
 
 		if resp.IPAddress != "" {
-			return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+			conn, err := net.DialTimeout("tcp", resp.IPAddress+":80", 5*time.Second)
+			if conn != nil && err == nil {
+				_ = conn.Close()
+				return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+			}
 		}
 
 		time.Sleep(10 * time.Second)
