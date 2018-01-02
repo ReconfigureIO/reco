@@ -53,7 +53,7 @@ func init() {
 		projectCmdSet,
 		projectCmdGet,
 		projectCmdCreate,
-		genListSubcommand("project"),
+		genListSubcommand("projects", "Project"),
 	)
 
 	RootCmd.AddCommand(projectCmd)
