@@ -7,9 +7,9 @@ import (
 )
 
 var deploymentVars = struct {
-	wait bool
+	wait string
 }{
-	wait: true,
+	wait: "true",
 }
 
 var deploymentCmdStart = &cobra.Command{
@@ -50,7 +50,7 @@ var deploymentCmdConnect = &cobra.Command{
 }
 
 func init() {
-	deploymentCmdStart.PersistentFlags().BoolVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
+	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
 	deploymentCmd := genDevCommand("deployment", "d", "dep", "deps", "deployments")
 	deploymentCmd.AddCommand(deploymentCmdStart)

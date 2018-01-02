@@ -29,7 +29,7 @@ type deploymentJob struct {
 func (p deploymentJob) Start(args Args) (string, error) {
 	buildID := String(args.At(0))
 	command := String(args.At(1))
-	wait := Bool(args.Last())
+	wait := String(args.Last())
 	cmdArgs := StringSlice(args.At(2))
 
 	req := p.apiRequest(endpoints.deployments.String())
@@ -64,8 +64,10 @@ func (p deploymentJob) Start(args Args) (string, error) {
 
 	logger.Info.Println("done. Deployment id: ", respJSON.Value.ID)
 	logger.Info.Println()
-	if wait {
+	if wait == "true" {
 		return respJSON.Value.ID, p.waitAndLog("deployment", respJSON.Value.ID)
+	} else if wait == "http" {
+		return respJSON.Value.ID, p.Connect(respJSON.Value.ID)
 	}
 	return "", nil
 }
