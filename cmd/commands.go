@@ -24,7 +24,6 @@ You can start, stop, list %ss and stream logs.`, name, name),
 	}
 
 	cmd.AddCommand(
-		genLogSubcommand(name),
 		genStopSubcommand(name),
 	)
 
