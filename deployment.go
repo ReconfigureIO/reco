@@ -131,6 +131,7 @@ func (p deploymentJob) Log(id string, writer io.Writer) error {
 }
 
 func (p deploymentJob) Connect(id string) error {
+	logger.Info.Println("Waiting for deployment to listen on port 80")
 	for {
 		resp, err := p.clientImpl.getJob("deployment", id)
 		if err != nil {
