@@ -39,10 +39,10 @@ var (
 	StatusCompleted = "COMPLETED"
 	// StatusErrored is errored job state.
 	StatusErrored = "ERRORED"
-	// An error event with code value 1 indicates timeout
+	// An error event with code value 124 indicates timeout
 	StatusTimeout = "TIMEOUT"
-	// An error event with Code value 1 indicates timeout
-	ErrorCodeTimeout = 1
+	// An error event with Code value 124 indicates timeout
+	ErrorCodeTimeout = 124
 )
 
 // jobInfo gives information about a build.
