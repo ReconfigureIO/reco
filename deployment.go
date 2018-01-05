@@ -68,7 +68,11 @@ func (p deploymentJob) Start(args Args) (string, error) {
 	if wait == "true" {
 		return respJSON.Value.ID, p.waitAndLog("deployment", respJSON.Value.ID)
 	} else if wait == "http" {
-		return respJSON.Value.ID, p.Connect(respJSON.Value.ID, false)
+		err := p.waitForStatus("deployment", respJSON.Value.ID, StatusStarted)
+		if err == nil {
+			err = p.Connect(respJSON.Value.ID, false)
+		}
+		return respJSON.Value.ID, err
 	}
 	return "", nil
 }

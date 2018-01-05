@@ -40,18 +40,19 @@ const (
 )
 
 var (
-	errUnsupported       = errors.New("command is unsupported for reconfigure.io platform")
-	errMissingServer     = errors.New("PLATFORM_SERVER config or environment variable not set")
-	errAuthRequired      = errors.New("authentication required. Run 'reco auth' to authenticate")
-	errAuthFailed        = errors.New("authentication failed. Run 'reco auth' to authenticate")
-	errProjectNotSet     = errors.New("project not set. Run 'reco project set' to set one")
-	errProjectNotCreated = errors.New("no projects found. Run 'reco project create' to create one")
-	errProjectNotFound   = errors.New("project not found")
-	errNetworkError      = errors.New("network error")
-	errNotFound          = errors.New("not found")
-	errInvalidToken      = errors.New("the token is invalid")
-	errUnknownError      = errors.New("unknown error occurred")
-	errBadResponse       = errors.New("bad response from server")
+	errUnsupported           = errors.New("command is unsupported for reconfigure.io platform")
+	errMissingServer         = errors.New("PLATFORM_SERVER config or environment variable not set")
+	errAuthRequired          = errors.New("authentication required. Run 'reco auth' to authenticate")
+	errAuthFailed            = errors.New("authentication failed. Run 'reco auth' to authenticate")
+	errProjectNotSet         = errors.New("project not set. Run 'reco project set' to set one")
+	errProjectNotCreated     = errors.New("no projects found. Run 'reco project create' to create one")
+	errProjectNotFound       = errors.New("project not found")
+	errNetworkError          = errors.New("network error")
+	errNotFound              = errors.New("not found")
+	errInvalidToken          = errors.New("the token is invalid")
+	errUnknownError          = errors.New("unknown error occurred")
+	errBadResponse           = errors.New("bad response from server")
+	errUnexpectedTermination = errors.New("Job ended without reaching desired state")
 )
 
 // Client is a reconfigure.io platform client.
@@ -231,6 +232,31 @@ func decodeJSON(r io.Reader, body interface{}) error {
 func (p clientImpl) logJob(eventType string, id string) error {
 	logger.Info.Println("streaming logs for ", eventType, " ", id)
 	return p.logs(eventType, id)
+}
+
+func (p clientImpl) getStatus(jobType string, id string) string {
+	job, err := p.getJob(jobType, id)
+	if err == nil && job.Status != "" {
+		return job.Status
+	}
+	return StatusErrored
+}
+
+func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string) error {
+	status := StatusSubmitted
+	prevStatus := status
+	for status != targetStatus {
+		status = strings.ToUpper(p.getStatus(jobType, id))
+		if status != prevStatus {
+			logger.Info.Println("status: ", status)
+			prevStatus = status
+		}
+		if isCompleted(status) {
+			return errUnexpectedTermination
+		}
+		time.Sleep(10 * time.Second)
+	}
+	return nil
 }
 
 func (p clientImpl) waitAndLog(jobType string, id string) error {
