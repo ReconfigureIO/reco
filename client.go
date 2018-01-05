@@ -250,6 +250,9 @@ func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string
 		if status != prevStatus {
 			logger.Info.Println("status: ", status)
 			prevStatus = status
+			if status == StatusQueued && jobType == "deployment" {
+				logger.Info.Println("Waiting for EC2 instance to be allocated")
+			}
 		}
 		if isCompleted(status) {
 			return errUnexpectedTermination
