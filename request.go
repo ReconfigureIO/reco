@@ -48,13 +48,14 @@ func (p Endpoint) Graph() string {
 
 var (
 	endpoints = struct {
-		builds, deployments, projects, simulations, graphs Endpoint
+		builds, deployments, projects, simulations, graphs, users Endpoint
 	}{
 		builds:      "/builds",
 		simulations: "/simulations",
 		projects:    "/projects",
 		deployments: "/deployments",
 		graphs:      "/graphs",
+		users:       "/user",
 	}
 
 	httpClient = &http.Client{

@@ -203,6 +203,13 @@ func (p *clientImpl) Auth(token string) error {
 	}
 	p.Username = str[0] + "_" + str[1]
 	p.Token = str[2]
+
+	//test the token using an API call
+	req := p.apiRequest(endpoints.users.String())
+	_, err := req.Do("GET", nil)
+	if err != nil {
+		return errAuthFailed
+	}
 	return p.saveAuth()
 }
 
