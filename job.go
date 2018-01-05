@@ -40,7 +40,7 @@ var (
 	// StatusErrored is errored job state.
 	StatusErrored = "ERRORED"
 	// An error event with code value 124 indicates timeout
-	StatusTimeout = "TIMEOUT"
+	StatusTimeout = "TIMED-OUT"
 	// An error event with Code value 124 indicates timeout
 	ErrorCodeTimeout = 124
 )
