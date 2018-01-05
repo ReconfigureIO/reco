@@ -82,7 +82,7 @@ func connectDeployment(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
 		exitWithError("deployment id required")
 	}
-	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0]); err != nil {
+	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0], true); err != nil {
 		exitWithError(err)
 	}
 }

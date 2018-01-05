@@ -17,7 +17,7 @@ import (
 // DeploymentProxy proxies to a running deployment instance.
 type DeploymentProxy interface {
 	// Connect performs a proxy connection.
-	Connect(id string) error
+	Connect(id string, openBrowser bool) error
 }
 
 var _ Job = deploymentJob{}
@@ -68,7 +68,7 @@ func (p deploymentJob) Start(args Args) (string, error) {
 	if wait == "true" {
 		return respJSON.Value.ID, p.waitAndLog("deployment", respJSON.Value.ID)
 	} else if wait == "http" {
-		return respJSON.Value.ID, p.Connect(respJSON.Value.ID)
+		return respJSON.Value.ID, p.Connect(respJSON.Value.ID, false)
 	}
 	return "", nil
 }
@@ -130,7 +130,7 @@ func (p deploymentJob) Log(id string, writer io.Writer) error {
 	return p.clientImpl.logJob("deployment", id)
 }
 
-func (p deploymentJob) Connect(id string) error {
+func (p deploymentJob) Connect(id string, openBrowser bool) error {
 	logger.Info.Println("Waiting for deployment to listen on port 80")
 	for {
 		resp, err := p.clientImpl.getJob("deployment", id)
@@ -146,7 +146,11 @@ func (p deploymentJob) Connect(id string) error {
 			conn, err := net.DialTimeout("tcp", resp.IPAddress+":80", 5*time.Second)
 			if conn != nil && err == nil {
 				_ = conn.Close()
-				return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+				logger.Info.Printf("Deployment ready at http://%s/", resp.IPAddress)
+				if openBrowser {
+					return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+				}
+				return nil
 			}
 		}
 
