@@ -53,7 +53,7 @@ var (
 	errInvalidToken           = errors.New("The token is invalid")
 	errUnknownError           = errors.New("Unknown error occurred")
 	errBadResponse            = errors.New("Bad response from server")
-  errUnexpectedTermination = errors.New("Job ended without reaching desired state")
+	errUnexpectedTermination  = errors.New("Job ended without reaching desired state")
 )
 
 // Client is a reconfigure.io platform client.
@@ -254,14 +254,34 @@ func (p clientImpl) getStatus(jobType string, id string) string {
 
 func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string) error {
 	status := StatusSubmitted
-	prevStatus := status
+	prevStatus := ""
 	for status != targetStatus {
 		status = strings.ToUpper(p.getStatus(jobType, id))
 		if status != prevStatus {
 			logger.Info.Println("status: ", status)
 			prevStatus = status
-			if status == StatusQueued && jobType == "deployment" {
-				logger.Info.Println("Waiting for EC2 instance to be allocated")
+			switch jobType {
+			case "deployment":
+				switch status {
+				case StatusQueued:
+					logger.Info.Println("Waiting for EC2 instance to be allocated")
+				case StatusSubmitted:
+					logger.Info.Println("Waiting for Spot Instance Request to be created")
+				default:
+				}
+			case "build":
+				switch status {
+				case StatusQueued:
+					logger.Info.Println("Waiting for Batch job to start")
+				default:
+				}
+			case "simulation":
+				switch status {
+				case StatusQueued:
+					logger.Info.Println("Waiting for Batch job to start")
+				default:
+				}
+			default:
 			}
 		}
 		if isCompleted(status) {
@@ -273,37 +293,10 @@ func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string
 }
 
 func (p clientImpl) waitAndLog(jobType string, id string) error {
-	logger.Info.Println(`you can run "reco `, jobType, " log ", id, `" to manually stream logs`)
-	logger.Info.Println("getting ", jobType, " details")
-
-	getStatus := func() string {
-		job, err := p.getJob(jobType, id)
-		if err == nil && job.Status != "" {
-			return job.Status
-		}
-		return StatusWaiting
-	}
-
-	status := getStatus()
-	logger.Info.Println("status: ", status)
-
-	if jobType == "" || jobType == JobTypeBuild {
-		logger.Info.Println("this will take at least 4 hours")
-	} else {
-		logger.Info.Println("this may take several minutes")
-	}
-
-	logger.Info.Println("waiting for ", jobType, " to start")
-
-	body, err := p.waitForLog(jobType, id, true)
+	err := p.waitForStatus(jobType, id, StatusStarted)
 	if err != nil {
 		return err
 	}
-	defer body.Close()
-
-	logger.Info.Println("status: ", getStatus())
-	logger.Info.Println("streaming logs")
-	logger.Std.Println()
 	return p.logs(jobType, id)
 }
 

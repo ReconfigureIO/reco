@@ -64,7 +64,7 @@ func (p deploymentJob) Start(args Args) (string, error) {
 	}
 
 	logger.Info.Println("done. Deployment id: ", respJSON.Value.ID)
-	logger.Info.Println()
+	logger.Info.Println(`you can run "reco deployment log `, respJSON.Value.ID, `" to manually stream logs`)
 	if wait == "true" {
 		return respJSON.Value.ID, p.waitAndLog("deployment", respJSON.Value.ID)
 	} else if wait == "http" {
