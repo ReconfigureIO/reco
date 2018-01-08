@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mholt/archiver"
+	"github.com/reconfigureio/archiver"
 )
 
 // M is a convenience wrapper for map[string]interface{}.
