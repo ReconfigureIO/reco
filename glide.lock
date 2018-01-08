@@ -1,5 +1,5 @@
-hash: 6b507ad5b656252ddae43abd00f664d2a4543c7366d7b7bf0a8e99037de70d6b
-updated: 2017-12-21T19:53:44.0698Z
+hash: d4c01a8df12388a9100aa42d36b7f97a602dea21a2a3d0bd65f164c0243029d1
+updated: 2018-01-08T12:50:53.010132266Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -37,8 +37,6 @@ imports:
   version: 49d762b9817ba1c2e9d0c69183c2b4a8b8f1d934
 - name: github.com/mattn/go-runewidth
   version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
-- name: github.com/mholt/archiver
-  version: 26cf5bb32d07aa4e8d0de15f56ce516f4641d7df
 - name: github.com/mitchellh/ioprogress
   version: 8163955264568045f462ae7e2d6d07b2001fc997
 - name: github.com/mitchellh/mapstructure
@@ -59,6 +57,8 @@ imports:
   - xxHash32
 - name: github.com/pkg/sftp
   version: 1d5374a61d4959af383169ff31db1cd752c2d69a
+- name: github.com/reconfigureio/archiver
+  version: ec41b3af3a74d34f368868a57ef01ced8b8e9568
 - name: github.com/skratchdot/open-golang
   version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
   subpackages:
@@ -84,7 +84,7 @@ imports:
   - internal/xlog
   - lzma
 - name: golang.org/x/sys
-  version: d818ba11af4465e00c1998bd3f8a55603b422290
+  version: f3918c30c5c2cb527c0b071a27c35120a6c0719a
   subpackages:
   - unix
 - name: golang.org/x/text
@@ -93,5 +93,5 @@ imports:
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: 287cf08546ab5e7e37d55a84f7ed3fd1db036de5
+  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
 testImports: []

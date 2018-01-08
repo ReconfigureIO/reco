@@ -15,7 +15,7 @@ import (
 	"github.com/ReconfigureIO/reco/downloader"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/abiosoft/goutils/env"
-	"github.com/mholt/archiver"
+	"github.com/reconfigureio/archiver"
 	"github.com/spf13/cobra"
 )
 

@@ -1,6 +1,6 @@
 package: github.com/ReconfigureIO/reco
 import:
-- package: github.com/mholt/archiver
+- package: github.com/reconfigureio/archiver
 - package: github.com/spf13/cobra
 - package: github.com/spf13/viper
 - package: github.com/pkg/sftp
