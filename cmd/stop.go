@@ -11,13 +11,13 @@ import (
 
 var stopPreRun = func(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
-		exitWithError("id required")
+		exitWithError("ID required")
 	}
 }
 
 func genStopSubcommand(name string, job string) *cobra.Command {
 	return &cobra.Command{
-		Use:     "stop id",
+		Use:     "stop ID",
 		Aliases: []string{"s", "stp", "stops"},
 		Short:   fmt.Sprintf("Stop a %s", name),
 		Long:    fmt.Sprintf("Stop a %s previously started with 'reco %s run'", name, name),

@@ -42,7 +42,7 @@ your command instead. The two forms are equivalent:
 }
 
 var deploymentCmdConnect = &cobra.Command{
-	Use:     "connect id",
+	Use:     "connect ID",
 	Aliases: []string{"c", "connects"},
 	Short:   "Connect to a running deployment",
 	Long:    "Connect to a running deployment",
@@ -83,7 +83,7 @@ func startDeployment(cmd *cobra.Command, args []string) {
 
 func connectDeployment(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
-		exitWithError("deployment id required")
+		exitWithError("deployment ID required")
 	}
 	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0], true); err != nil {
 		exitWithError(err)
