@@ -39,7 +39,10 @@ var (
 	StatusCompleted = "COMPLETED"
 	// StatusErrored is errored job state.
 	StatusErrored = "ERRORED"
-	// StatusWaiting is waiting for events state
+	// An error event with code value 124 indicates timeout
+	StatusTimeout = "TIMED-OUT"
+	// An error event with Code value 124 indicates timeout
+	ErrorCodeTimeout = 124
 )
 
 // jobInfo gives information about a build.
@@ -86,6 +89,15 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 				lastEvent = ev
 			}
 		}
+		for _, event := range str.Job.Events {
+			if isTimeout(event) {
+				// Timeout isn't a Status reported by API
+				// but we know the error event was caused by a timeout
+				// so report that to user
+				lastEvent.Status = StatusTimeout
+			}
+		}
+
 		ji.Status = strings.ToLower(lastEvent.Status)
 		ji.Time = firstEvent.Timestamp
 		if eventSorter(str.Job.Events).Completed() {
@@ -161,6 +173,23 @@ func (job jobInfo) IsStarted() bool {
 func isStarted(status string) bool {
 	switch strings.ToUpper(status) {
 	case StatusCompleted, StatusErrored, StatusTerminated, StatusTerminating, StatusStarted, StatusCreatingImage:
+		return true
+	}
+	return false
+}
+
+func isTimeout(ev event) bool {
+	if isError(ev) {
+		if ev.Code == ErrorCodeTimeout {
+			return true
+		}
+	}
+	return false
+}
+
+func isError(ev event) bool {
+	switch strings.ToUpper(ev.Status) {
+	case StatusErrored:
 		return true
 	}
 	return false
