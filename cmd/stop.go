@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
@@ -16,7 +15,7 @@ var stopPreRun = func(cmd *cobra.Command, args []string) {
 	}
 }
 
-func genStopSubcommand(name string) *cobra.Command {
+func genStopSubcommand(name string, job string) *cobra.Command {
 	return &cobra.Command{
 		Use:     "stop id",
 		Aliases: []string{"s", "stp", "stops"},
@@ -24,7 +23,7 @@ func genStopSubcommand(name string) *cobra.Command {
 		Long:    fmt.Sprintf("Stop a %s previously started with 'reco %s run'", name, name),
 		PreRun:  stopPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName(strings.Title(name)).Call(nil)[0].Interface()
+			l := reflect.ValueOf(tool).MethodByName(job).Call(nil)[0].Interface()
 			if err := l.(reco.Job).Stop(args[0]); err != nil {
 				exitWithError(err)
 			}

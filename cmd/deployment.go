@@ -52,7 +52,10 @@ var deploymentCmdConnect = &cobra.Command{
 func init() {
 	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
-	deploymentCmd := genDevCommand("deployment", "d", "dep", "deps", "deployments")
+	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
+	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genLogSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genStopSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 

@@ -40,19 +40,20 @@ const (
 )
 
 var (
-	errUnsupported           = errors.New("command is unsupported for reconfigure.io platform")
-	errMissingServer         = errors.New("PLATFORM_SERVER config or environment variable not set")
-	errAuthRequired          = errors.New("authentication required. Run 'reco auth' to authenticate")
-	errAuthFailed            = errors.New("authentication failed. Run 'reco auth' to authenticate")
-	errProjectNotSet         = errors.New("project not set. Run 'reco project set' to set one")
-	errProjectNotCreated     = errors.New("no projects found. Run 'reco project create' to create one")
-	errProjectNotFound       = errors.New("project not found")
-	errNetworkError          = errors.New("network error")
-	errNotFound              = errors.New("not found")
-	errInvalidToken          = errors.New("the token is invalid")
-	errUnknownError          = errors.New("unknown error occurred")
-	errBadResponse           = errors.New("bad response from server")
-	errUnexpectedTermination = errors.New("Job ended without reaching desired state")
+	errUnsupported            = errors.New("command is unsupported for reconfigure.io platform")
+	errMissingServer          = errors.New("PLATFORM_SERVER config or environment variable not set")
+	errAuthRequired           = errors.New("Authentication required. Run 'reco auth' to authenticate")
+	errAuthFailed             = errors.New("Authentication failed. Run 'reco auth' to authenticate")
+	errAuthFailedInvalidToken = errors.New("Authentication failed. The provided token is invalid")
+	errProjectNotSet          = errors.New("Project not set. Run 'reco project set' to set one")
+	errProjectNotCreated      = errors.New("No projects found. Run 'reco project create' to create one")
+	errProjectNotFound        = errors.New("Project not found")
+	errNetworkError           = errors.New("Network error")
+	errNotFound               = errors.New("Not found")
+	errInvalidToken           = errors.New("The token is invalid")
+	errUnknownError           = errors.New("Unknown error occurred")
+	errBadResponse            = errors.New("Bad response from server")
+  errUnexpectedTermination = errors.New("Job ended without reaching desired state")
 )
 
 // Client is a reconfigure.io platform client.
@@ -204,6 +205,15 @@ func (p *clientImpl) Auth(token string) error {
 	}
 	p.Username = str[0] + "_" + str[1]
 	p.Token = str[2]
+
+	//test the token using an API call
+	req := p.apiRequest(endpoints.users.String())
+	_, err := req.Do("GET", nil)
+	if err != nil {
+		return errAuthFailedInvalidToken
+	} else {
+		logger.Info.Println("Authentication successful")
+	}
 	return p.saveAuth()
 }
 
