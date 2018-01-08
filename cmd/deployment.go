@@ -7,9 +7,9 @@ import (
 )
 
 var deploymentVars = struct {
-	wait bool
+	wait string
 }{
-	wait: true,
+	wait: "true",
 }
 
 var deploymentCmdStart = &cobra.Command{
@@ -42,7 +42,7 @@ your command instead. The two forms are equivalent:
 }
 
 var deploymentCmdConnect = &cobra.Command{
-	Use:     "connect id",
+	Use:     "connect ID",
 	Aliases: []string{"c", "connects"},
 	Short:   "Connect to a running deployment",
 	Long:    "Connect to a running deployment",
@@ -50,7 +50,7 @@ var deploymentCmdConnect = &cobra.Command{
 }
 
 func init() {
-	deploymentCmdStart.PersistentFlags().BoolVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
+	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
 	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
@@ -83,9 +83,9 @@ func startDeployment(cmd *cobra.Command, args []string) {
 
 func connectDeployment(cmd *cobra.Command, args []string) {
 	if len(args) == 0 {
-		exitWithError("deployment id required")
+		exitWithError("deployment ID required")
 	}
-	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0]); err != nil {
+	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0], true); err != nil {
 		exitWithError(err)
 	}
 }

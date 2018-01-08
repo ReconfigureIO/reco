@@ -64,7 +64,7 @@ func generateGraph(cmd *cobra.Command, args []string) {
 
 func openGraph(_ *cobra.Command, args []string) {
 	if len(args) == 0 {
-		exitWithError("id required")
+		exitWithError("ID required")
 	}
 	file, err := tool.Graph().Open(args[0])
 	if err != nil {

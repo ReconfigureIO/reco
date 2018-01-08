@@ -68,7 +68,7 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 		str.Project = str.Build.Project
 	}
 	ji.ID = str.ID
-	ji.Status = "unstarted"
+	ji.Status = StatusSubmitted
 	ji.Project = str.Project.Name
 	ji.Command = str.Command
 	ji.IPAddress = str.IPAddress

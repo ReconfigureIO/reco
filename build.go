@@ -45,7 +45,7 @@ func (b buildJob) Start(args Args) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	logger.Info.Println("done. Build id: ", id)
+	logger.Info.Println("done. Build ID: ", id)
 
 	logger.Info.Println("archiving")
 	srcArchive, err := archiveDir(srcDir)

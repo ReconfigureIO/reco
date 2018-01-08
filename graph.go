@@ -56,7 +56,7 @@ func (p platformGraph) Generate(args Args) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	logger.Info.Println("done. Graph id: ", id)
+	logger.Info.Println("done. Graph ID: ", id)
 
 	logger.Info.Println("archiving")
 	srcArchive, err := archiveDir(srcDir)

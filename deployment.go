@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"strings"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 // DeploymentProxy proxies to a running deployment instance.
 type DeploymentProxy interface {
 	// Connect performs a proxy connection.
-	Connect(id string) error
+	Connect(id string, openBrowser bool) error
 }
 
 var _ Job = deploymentJob{}
@@ -29,7 +30,7 @@ type deploymentJob struct {
 func (p deploymentJob) Start(args Args) (string, error) {
 	buildID := String(args.At(0))
 	command := String(args.At(1))
-	wait := Bool(args.Last())
+	wait := String(args.Last())
 	cmdArgs := StringSlice(args.At(2))
 
 	req := p.apiRequest(endpoints.deployments.String())
@@ -62,10 +63,16 @@ func (p deploymentJob) Start(args Args) (string, error) {
 		return "", errUnknownError
 	}
 
-	logger.Info.Println("done. Deployment id: ", respJSON.Value.ID)
-	logger.Info.Println()
-	if wait {
+	logger.Info.Println("done. Deployment ID: ", respJSON.Value.ID)
+	logger.Info.Println(`you can run "reco deployment log `, respJSON.Value.ID, `" to manually stream logs`)
+	if wait == "true" {
 		return respJSON.Value.ID, p.waitAndLog("deployment", respJSON.Value.ID)
+	} else if wait == "http" {
+		err := p.waitForStatus("deployment", respJSON.Value.ID, StatusStarted)
+		if err == nil {
+			err = p.Connect(respJSON.Value.ID, false)
+		}
+		return respJSON.Value.ID, err
 	}
 	return "", nil
 }
@@ -127,7 +134,8 @@ func (p deploymentJob) Log(id string, writer io.Writer) error {
 	return p.clientImpl.logJob("deployment", id)
 }
 
-func (p deploymentJob) Connect(id string) error {
+func (p deploymentJob) Connect(id string, openBrowser bool) error {
+	logger.Info.Println("Waiting for deployment to listen on port 80")
 	for {
 		resp, err := p.clientImpl.getJob("deployment", id)
 		if err != nil {
@@ -139,7 +147,15 @@ func (p deploymentJob) Connect(id string) error {
 		}
 
 		if resp.IPAddress != "" {
-			return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+			conn, err := net.DialTimeout("tcp", resp.IPAddress+":80", 5*time.Second)
+			if conn != nil && err == nil {
+				_ = conn.Close()
+				logger.Info.Printf("Deployment ready at http://%s/", resp.IPAddress)
+				if openBrowser {
+					return open.Run(fmt.Sprintf("http://%s/", resp.IPAddress))
+				}
+				return nil
+			}
 		}
 
 		time.Sleep(10 * time.Second)
