@@ -39,7 +39,6 @@ after_test:
   - go build -ldflags "-X 'main.version=%VERSION%' -X 'main.buildTime=%APPVEYOR_REPO_COMMIT_TIMESTAMP%' -X 'main.builder=Appveyor' -X 'main.goversion=%GOVERSION%'" -o C:\reco.exe github.com/ReconfigureIO/reco/cmd/reco
   - C:\reco.exe version
   - C:\reco.exe check --source C:\reco-examples\addition
-  - C:\reco.exe check --source C:\reco-examples\histogram
   - C:\reco.exe check --source C:\reco-examples\histogram-array
   - C:\reco.exe check --source C:\reco-examples\histogram-parallel
   - copy C:\reco.exe C:\gopath\src\github.com\ReconfigureIO\reco\nsis
