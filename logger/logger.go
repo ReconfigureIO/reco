@@ -5,10 +5,7 @@ import (
 	"io"
 	"os"
 	"sync"
-	"time"
 )
-
-const timeFormat = "2006-01-02 15:04:05"
 
 var (
 	// Std is standard logger. It writes outputs to stdout.
@@ -20,7 +17,7 @@ var (
 )
 
 func prefix() string {
-	return fmt.Sprintf("%s| ", time.Now().Format(timeFormat))
+	return ""
 }
 
 func errPrefix() string {
