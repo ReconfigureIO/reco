@@ -241,6 +241,7 @@ func decodeJSON(r io.Reader, body interface{}) error {
 
 func (p clientImpl) logJob(eventType string, id string) error {
 	logger.Info.Println("Beginning log stream for ", eventType, " ", id)
+	logger.Info.Println()
 	return p.logs(eventType, id)
 }
 
