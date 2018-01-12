@@ -240,7 +240,7 @@ func decodeJSON(r io.Reader, body interface{}) error {
 }
 
 func (p clientImpl) logJob(eventType string, id string) error {
-	logger.Info.Println("streaming logs for ", eventType, " ", id)
+	logger.Info.Println("Beginning log stream for ", eventType, " ", id)
 	return p.logs(eventType, id)
 }
 
@@ -297,7 +297,7 @@ func (p clientImpl) waitAndLog(jobType string, id string) error {
 	if err != nil {
 		return err
 	}
-	return p.logs(jobType, id)
+	return p.logJob(jobType, id)
 }
 
 func (p clientImpl) logs(jobType string, id string) error {
