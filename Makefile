@@ -16,7 +16,8 @@ GOPACKAGE := "github.com/ReconfigureIO/$(NAME)"
 LDFLAGS := -X 'main.version=$(VERSION)' \
            -X 'main.buildTime=$(BUILDTIME)' \
            -X 'main.builder=$(BUILDER)' \
-           -X 'main.goversion=$(GOVERSION)'
+           -X 'main.goversion=$(GOVERSION)' \
+           -X 'github.com/ReconfigureIO/reco.alternativePlatformServer=$(API_SERVER)'
 CODEBUILD_NAME := "sample-snap-builder"
 GO_EXTENSION :=
 

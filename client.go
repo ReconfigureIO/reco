@@ -40,6 +40,7 @@ const (
 )
 
 var (
+	alternativePlatformServer string
 	errUnsupported            = errors.New("command is unsupported for reconfigure.io platform")
 	errMissingServer          = errors.New("PLATFORM_SERVER config or environment variable not set")
 	errAuthRequired           = errors.New("Authentication required. Run 'reco auth' to authenticate")
@@ -173,9 +174,14 @@ func (p *clientImpl) loadProject() error {
 }
 
 func (p *clientImpl) Init() error {
+	// is runtime env var set? Was build time env var set?
 	server := viper.GetString(platformServerKey)
 	if server == "" {
-		server = platformServerAddress
+		if alternativePlatformServer == "" {
+			server = platformServerAddress
+		} else {
+			server = alternativePlatformServer
+		}
 	}
 	u, err := url.Parse(server)
 	if err != nil {
