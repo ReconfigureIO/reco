@@ -181,6 +181,7 @@ func (p *clientImpl) Init() error {
 			server = platformServerAddress
 		} else {
 			server = alternativePlatformServer
+			fmt.Println("Using alternative platform server: ", server)
 		}
 	}
 	u, err := url.Parse(server)
