@@ -15,27 +15,28 @@ var deploymentVars = struct {
 var deploymentCmdStart = &cobra.Command{
 	Use:     "run [flags] image executable -- [args]",
 	Aliases: []string{"r", "start", "starts"},
-	Short:   "Run a command from a build",
-	Long: `Run a command from a build on a machine equipped with an FPGA.
+	Short:   "Run a command from a build and deploy the build image to an F1 instance.",
+	Long: `Deploy the image from a specified build, and run a command from that build on an F1 instance.
 
 Defining commands:
 
-Your project should have a top-level directory "cmd". On build, each
-subdirectory in "cmd" with a main.go will be built and put into your
-$PATH automatically.
+The program you built will have a main.go file at the top level. This will
+have been compiled and optiized into a deployable image. The program will also
+have had a top-level directory "cmd". On build, each subdirectory in "cmd"
+containing a main.go file will now be available as a runnable command.
 
-For example, if you have a file at "cmd/my-cmd/main.go", you will have
-a binary named "my-cmd" available to you.
+For example, if your program has a file at "cmd/my-cmd/main.go", you will have
+a runnable command named "my-cmd" available to you.
 
 Passing arguments:
 
 Arguments that are not captured by this tool are passed to the command.
 
-For example, "reco run my-cmd 1" would pass the argument "1" to your
-"my-cmd" binary. It's equivalent to calling "my-cmd 1". However, some
-of your arguments may conflict with this binary. If this is the case,
+For example, "reco deploy run my-cmd 1" would pass the argument "1" to
+"my-cmd". It's equivalent to calling "my-cmd 1". However, some
+of your arguments may conflict with this command. If this is the case,
 use "--" to specify that all further arguments should be provided to
-your command instead. The two forms are equivalent:
+your command. The two forms are equivalent:
 "reco run my-image my-cmd -- 1" and "reco run my-image my-cmd 1"
 `,
 	Run: startDeployment,
@@ -54,8 +55,8 @@ func init() {
 
 	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
-	deploymentCmd.AddCommand(genLogSubcommand("deployments", "Deployment"))
-	deploymentCmd.AddCommand(genStopSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genLogSubcommand("deployment", "Deployment"))
+	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 

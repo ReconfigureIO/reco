@@ -26,7 +26,7 @@ var dependencies = map[string]dep{
 // checkCmd represents the version command
 var checkCmd = &cobra.Command{
 	Use:    "check",
-	Short:  "Verify that the compiler can build your Go source",
+	Short:  "Verify that the Reconfigure.io compiler can build your Go source code.",
 	Run:    check,
 	PreRun: initializeCmd,
 	Annotations: map[string]string{
@@ -39,7 +39,7 @@ var checkCmdVars struct {
 }
 
 func init() {
-	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for, and install dependency updates")
+	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for and install dependency updates")
 	RootCmd.AddCommand(checkCmd)
 }
 
@@ -52,10 +52,10 @@ func check(_ *cobra.Command, args []string) {
 	}
 	switch dep.Installed() {
 	case statusUpdateAvailable:
-		fmt.Println("check dependency update available, updating...")
+		fmt.Println("check update available, updating...")
 		update()
 	case statusNotInstalled:
-		fmt.Println("check dependency not found, installing...")
+		fmt.Println("check not found, installing...")
 		update()
 	}
 	srcFile := filepath.Join(srcDir, "main.go")
@@ -275,7 +275,7 @@ func (r recocheckDep) makeVirtualGoPath() error {
 			switch pErr.Err.Error() {
 			case os.ErrNotExist.Error():
 				return nil
-			case "no such file or directory":
+			case "No such file or directory.":
 				return nil
 			case "The system cannot find the file specified.":
 				return nil

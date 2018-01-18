@@ -14,7 +14,7 @@ var graphCmd = &cobra.Command{
 	Aliases: []string{"g", "graphs"},
 	Short:   "Manage graphs",
 	Long: `Manage graphs.
-You can generate graph, list graphs and open a generated graph.`,
+You can generate a dataflow graph, list your graphss and open a generated graph.`,
 	PersistentPreRun: initializeCmd,
 	Annotations: map[string]string{
 		"type": "dev",
@@ -24,8 +24,8 @@ You can generate graph, list graphs and open a generated graph.`,
 var graphCmdGenerate = &cobra.Command{
 	Use:     "gen",
 	Aliases: []string{"g", "generate"},
-	Short:   "Generate graph",
-	Long: `Generate a graph for source code.
+	Short:   "Generate a graph",
+	Long: `Generate a graph for your source code.
 This usually take few minutes.
 `,
 	Run: generateGraph,
@@ -36,7 +36,7 @@ var graphCmdOpen = &cobra.Command{
 	Aliases: []string{"o"},
 	Short:   "Open a generated graph",
 	Long: `Open a generated graph.
-This attempts to use the default pdf viewer to open the graph.
+This attempts to use your default pdf viewer to open the graph.
 `,
 	Run: openGraph,
 }
@@ -84,7 +84,7 @@ func openGraph(_ *cobra.Command, args []string) {
 	}
 	// could not open with default pdf handler.
 	if cmd == nil || cmd.Run() != nil {
-		logger.Std.Printf("Graph is available at %s", file)
+		logger.Std.Printf("Your graph is available here: %s", file)
 		return
 	}
 }

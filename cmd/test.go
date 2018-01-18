@@ -11,17 +11,17 @@ var testCmdStart = &cobra.Command{
 	Aliases: []string{"r", "start", "starts", "create"},
 	Short:   "Start a simulation",
 	Long: `Start a simulation.
-	Simulation test builds and deployment and runs much faster.
-	It is a good way to check for errors before a build.
+	Running a hardware simulation checks how your program will build and deploy on hardware.
+	It's much faster than running a build and is a good way to check for errors in your code.
 	`,
 	Run: startTest,
 }
 
 func init() {
-	testCmd := genDevCommand("test", "tests", "t", "sim", "simulation", "simulations")
-	testCmd.AddCommand(genListSubcommand("tests", "Test"))
-	testCmd.AddCommand(genLogSubcommand("tests", "Tests"))
-	testCmd.AddCommand(genStopSubcommand("tests", "Tests"))
+	testCmd := genDevCommand("sim", "test", "tests", "t", "simulation", "simulations")
+	testCmd.AddCommand(genListSubcommand("simulations", "Simulation"))
+	testCmd.AddCommand(genLogSubcommand("simulation", "Simulation"))
+	testCmd.AddCommand(genStopSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(testCmdStart)
 
 	RootCmd.AddCommand(testCmd)

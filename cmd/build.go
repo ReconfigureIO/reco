@@ -20,24 +20,22 @@ var buildVars = struct {
 var buildCmdStart = &cobra.Command{
 	Use:     "run",
 	Aliases: []string{"r", "start", "starts", "create"},
-	Short:   "Start a new build",
-	Long: `Start a new build. The build (if successful) can be deployed afterwards.
+	Short:   "Start a new build.",
+	Long: `Start a new build. Once complete, a sucessful build creates an image which can be deployed to an F1 instance using its build ID.
 
-Your project should have a top-level directory "cmd". On build, each
-subdirectory in "cmd" with a main.go will be built and put into your
-$PATH automatically.
+	Your FPGA code will be compiled, optimized and assigned a unique ID. Each subdirectory within "cmd" containing a main.go file will become a runnable command, available for use when you deploy your build - reco deploy run <build_ID> <cmd>.
 `,
 	Run: startBuild,
 }
 
 func init() {
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "wait for the build to complete. If false, it only kicks off the build without waiting.")
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "force build. Ignore source code validation.")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If false, logs will only be displayed up to the point where the build is started and assigned its build ID. Use `reco build list` to check on the status of all your builds.")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation.")
 
 	buildCmd := genDevCommand("build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genLogSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genStopSubcommand("builds", "Build"))
+	buildCmd.AddCommand(genLogSubcommand("build", "Build"))
+	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
 
 	RootCmd.AddCommand(buildCmd)

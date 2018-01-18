@@ -100,7 +100,7 @@ func (b testJob) List(filter M) (printer.Table, error) {
 	}
 
 	table = printer.Table{
-		Header: []string{"test id", "status", "started", "duration"},
+		Header: []string{"simulation id", "status", "started", "duration"},
 		Body:   body,
 	}
 	if allProjects {
