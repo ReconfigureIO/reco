@@ -30,8 +30,8 @@ func genListSubcommand(name string, job string) *cobra.Command {
 		Aliases: []string{"ls", "lst", "lists"},
 		Short:   fmt.Sprintf("List all %s for your current project", name),
 		Long:    fmt.Sprintf("List all %s for your current project.
-			View start and end times, status information and unique IDs for your %s"
-			, name),
+			View start and end times, status information and unique IDs for your",
+			name, name),
 		Run: func(cmd *cobra.Command, args []string) {
 			filters := reco.M{}
 			if listVars.status != "" {
