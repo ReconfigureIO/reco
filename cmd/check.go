@@ -275,7 +275,7 @@ func (r recocheckDep) makeVirtualGoPath() error {
 			switch pErr.Err.Error() {
 			case os.ErrNotExist.Error():
 				return nil
-			case "No such file or directory.":
+			case "no such file or directory":
 				return nil
 			case "The system cannot find the file specified.":
 				return nil
