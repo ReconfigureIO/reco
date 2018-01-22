@@ -15,7 +15,7 @@ var deploymentVars = struct {
 var deploymentCmdStart = &cobra.Command{
 	Use:     "run [flags] image executable -- [args]",
 	Aliases: []string{"r", "start", "starts"},
-	Short:   "Run a command from a build and deploy the build image to an F1 instance.",
+	Short:   "Run a command from a build and deploy the build image to an F1 instance",
 	Long: `Deploy the image from a specified build, and run a command from that build on an F1 instance.
 
 Defining commands:

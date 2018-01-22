@@ -14,7 +14,7 @@ var graphCmd = &cobra.Command{
 	Aliases: []string{"g", "graphs"},
 	Short:   "Manage graphs",
 	Long: `Manage graphs.
-You can generate a dataflow graph, list your graphss and open a generated graph.`,
+You can generate a dataflow graph, list your graphs and open a generated graph.`,
 	PersistentPreRun: initializeCmd,
 	Annotations: map[string]string{
 		"type": "dev",

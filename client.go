@@ -41,14 +41,14 @@ const (
 
 var (
 	alternativePlatformServer string
-	errUnsupported            = errors.New("command is unsupported for reconfigure.io platform")
+	errUnsupported            = errors.New("That command is not supported by the reconfigure.io platform")
 	errMissingServer          = errors.New("PLATFORM_SERVER config or environment variable not set")
 	errAuthRequired           = errors.New("Authentication required. Run 'reco auth' to authenticate")
-	errAuthFailed             = errors.New("Authentication failed. Run 'reco auth' to authenticate")
-	errAuthFailedInvalidToken = errors.New("Authentication failed. The provided token is invalid")
+	errAuthFailed             = errors.New("Authentication failed. Run 'reco auth' to try again")
+	errAuthFailedInvalidToken = errors.New("Authentication failed. The token you entered is invalid")
 	errProjectNotSet          = errors.New("Project not set. Run 'reco project set' to set one")
 	errProjectNotCreated      = errors.New("No projects found. Run 'reco project create' to create one")
-	errProjectNotFound        = errors.New("Project not found")
+	errProjectNotFound        = errors.New("Project not found. Run 'reco project list' to view all your available projects")
 	errNetworkError           = errors.New("Network error")
 	errNotFound               = errors.New("Not found")
 	errInvalidToken           = errors.New("The token is invalid")

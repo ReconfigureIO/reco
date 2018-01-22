@@ -14,8 +14,8 @@ func genDevCommand(name string, aliases ...string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     name,
 		Aliases: aliases,
-		Short:   fmt.Sprintf("Manage %ss", name),
-		Long: fmt.Sprintf(`Manage %ss.
+		Short:   fmt.Sprintf("Manage your %ss", name),
+		Long: fmt.Sprintf(`Manage your %ss.
 You can start, stop, list %ss and stream logs.`, name, name),
 		PersistentPreRun: initializeCmd,
 		Annotations: map[string]string{
@@ -23,8 +23,7 @@ You can start, stop, list %ss and stream logs.`, name, name),
 		},
 	}
 
-	cmd.AddCommand(
-	)
+	cmd.AddCommand()
 
 	return cmd
 }
