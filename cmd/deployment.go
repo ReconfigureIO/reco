@@ -13,7 +13,7 @@ var deploymentVars = struct {
 }
 
 var deploymentCmdStart = &cobra.Command{
-	Use:     "run [flags] image executable -- [args]",
+	Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
 	Aliases: []string{"r", "start", "starts"},
 	Short:   "Run a command from a build and deploy the build image to an F1 instance",
 	Long: `Deploy the image from a specified build, and run a command from that build on an F1 instance.
@@ -43,7 +43,7 @@ your command. The two forms are equivalent:
 }
 
 var deploymentCmdConnect = &cobra.Command{
-	Use:     "connect ID",
+	Use:     "connect <deploy_ID>",
 	Aliases: []string{"c", "connects"},
 	Short:   "Connect to a running deployment",
 	Long:    "Connect to a running deployment",
