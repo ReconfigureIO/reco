@@ -29,7 +29,8 @@ func genListSubcommand(name string, job string) *cobra.Command {
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
 		Short:   fmt.Sprintf("List all %s for your current project", name),
-		Long:    fmt.Sprintf("List all %s for your current project. View start and end times, status information and unique IDs for your %s", name, name),
+		Long:    fmt.Sprintf("List all %s for your current project.
+			View status information, start times and unique IDs for all %s", name, name),
 		Run: func(cmd *cobra.Command, args []string) {
 			filters := reco.M{}
 			if listVars.status != "" {
@@ -79,11 +80,11 @@ var listPostRun = func(cmd *cobra.Command, args []string) {
 }
 
 func listCmdAddFlags(listCmd *cobra.Command) {
-	listCmd.PersistentFlags().BoolVar(&listVars.noScroll, "no-scroll", listVars.noScroll, "disable scrollable paged output even if output is longer than the terminal height")
-	listCmd.PersistentFlags().IntVarP(&listVars.limit, "limit", "l", listVars.limit, "limit the number of results displayed")
-	listCmd.PersistentFlags().StringVar(&listVars.status, "status", listVars.status, "filter result by status: completed, errored, timed-out etc.")
-	listCmd.PersistentFlags().BoolVar(&listVars.allProjects, "all-projects", listVars.allProjects, "list items for all projects, not just the active project")
-	listCmd.PersistentFlags().BoolVar(&listVars.public, "public", listVars.public, "list publically available items")
+	listCmd.PersistentFlags().BoolVar(&listVars.noScroll, "no-scroll", listVars.noScroll, "Disable scrollable paged output even if output is longer than the terminal height")
+	listCmd.PersistentFlags().IntVarP(&listVars.limit, "limit", "l", listVars.limit, "Limit the number of results displayed")
+	listCmd.PersistentFlags().StringVar(&listVars.status, "status", listVars.status, "Filter result by status: completed, errored, timed-out etc.")
+	listCmd.PersistentFlags().BoolVar(&listVars.allProjects, "all-projects", listVars.allProjects, "List items for all projects, not just the active project")
+	listCmd.PersistentFlags().BoolVar(&listVars.public, "public", listVars.public, "Only list publically available items")
 }
 
 type lister interface {
