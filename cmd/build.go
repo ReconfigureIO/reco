@@ -21,15 +21,17 @@ var buildCmdStart = &cobra.Command{
 	Use:     "run",
 	Aliases: []string{"r", "start", "starts", "create"},
 	Short:   "Start a new build",
-	Long: `Start a new build. Once complete, a sucessful build creates an image which can be deployed to an F1 instance using its build ID.
+	Long: `Start a new build. A sucessful build creates an image which can be deployed to an F1 instance using its build ID.
 
-	Your FPGA code will be compiled, optimized and assigned a unique ID. Each subdirectory within "cmd" containing a main.go file will become a runnable command, available for use when you deploy your build - reco deploy run <build_ID> <cmd>.
+Your FPGA code will be compiled, optimized and assigned a unique ID.
+
+Each subdirectory within "cmd" containing a main.go file will become a runnable command. Runnable commands are available for use when you deploy your build - reco deploy run <build_ID> <my_cmd>.
 `,
 	Run: startBuild,
 }
 
 func init() {
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If false, logs will only be displayed up to the point where the build is started and assigned its build ID. Use `reco build list` to check on the status of all your builds.")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If false, logs will only be displayed up to the point where the build is started and assigned its build ID. Use 'reco build list' to check on the status of all your builds.")
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation.")
 
 	buildCmd := genDevCommand("build", "b", "builds")

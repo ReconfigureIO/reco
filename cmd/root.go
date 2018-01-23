@@ -37,10 +37,10 @@ func init() {
 	// template
 	RootCmd.SetUsageTemplate(usageTemplate)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `config file (default "`+filepath.Join(getConfigDir(), "reco.yml")+`")`)
-	RootCmd.PersistentFlags().StringVar(&provider, "provider", "", "service provider")
-	RootCmd.PersistentFlags().StringVarP(&srcDir, "source", "s", "", `source directory (default is current directory "`+getCurrentDir()+`")`)
-	RootCmd.PersistentFlags().StringVar(&project, "project", project, "project to use. If unset, the active project is used")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `Config file (default "`+filepath.Join(getConfigDir(), "reco.yml")+`")`)
+	RootCmd.PersistentFlags().StringVar(&provider, "provider", "", "Service provider")
+	RootCmd.PersistentFlags().StringVarP(&srcDir, "source", "s", "", `Source directory (default is current directory "`+getCurrentDir()+`")`)
+	RootCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	// hide provider and config. It is for internal use
 	RootCmd.PersistentFlags().MarkHidden("provider")

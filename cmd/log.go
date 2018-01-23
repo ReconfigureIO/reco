@@ -17,7 +17,7 @@ var logPreRun = func(cmd *cobra.Command, args []string) {
 
 func genLogSubcommand(name string, job string) *cobra.Command {
 	return &cobra.Command{
-		Use:     "<log_ID>",
+		Use:     "log ID",
 		Aliases: []string{"logs"},
 		Short:   fmt.Sprintf("Stream logs for a %s", name),
 		Long:    fmt.Sprintf("Stream logs for a %s previously started with 'reco %s run'", name, job),
