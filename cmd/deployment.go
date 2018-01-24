@@ -15,15 +15,15 @@ var deploymentVars = struct {
 var deploymentCmdStart = &cobra.Command{
 	Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
 	Aliases: []string{"r", "start", "starts"},
-	Short:   "Run a command from a build and deploy the build image to an F1 instance",
-	Long: `Deploy the image from a specified build, and run a command from that build on an F1 instance.
+	Short:   "Deploy a build image and command to an F1 instance",
+	Long: `Deploy a build image and run a command from that build on an F1 instance.
 
-Defining commands:
+More about commands:
 
-The program you built will have a main.go file at the top level. This will
-have been compiled and optiized into a deployable image. The program will also
-have had a top-level directory "cmd". On build, each subdirectory in "cmd"
-containing a main.go file will now be available as a runnable command.
+Reconfigure.io programs have a main.go at the top level and a top level
+directory "cmd". On build, the top level main.go will be compiled and optimized
+into a deployable image, and each subdirectory in "cmd" containing a main.go
+file will be available as a runnable command for the host CPU.
 
 For example, if your program has a file at "cmd/my-cmd/main.go", you will have
 a runnable command named "my-cmd" available to you.
@@ -51,7 +51,7 @@ var deploymentCmdConnect = &cobra.Command{
 }
 
 func init() {
-	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
+	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "Wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
 	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))

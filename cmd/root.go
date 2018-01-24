@@ -21,8 +21,8 @@ var errInvalidSourceDirectory = errors.New("invalid source directory. Directory 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "reco",
-	Short: "reco is the CLI utility for Reconfigure.io",
-	Long:  `reco is the CLI utility for Reconfigure.io`,
+	Short: "reco is the Reconfigure.io command line tool",
+	Long:  `reco is the Reconfigure.io command line tool`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
