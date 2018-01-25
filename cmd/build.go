@@ -22,11 +22,8 @@ var buildCmdStart = &cobra.Command{
 	Aliases: []string{"r", "start", "starts", "create"},
 	Short:   "Start a new build",
 	Long: `Start a new build.
-A successful build creates an image that can be deployed to an F1 instance. Your
-FPGA code will be compiled, optimized and assigned a unique ID. Each
-subdirectory within "cmd" containing a main.go file will become a runnable
-command available for use when you deploy your build - reco deploy run
-<build_ID> <my_cmd>.
+A successful build creates an image that can be deployed to an F1 instance. Your FPGA code will be compiled, optimized and assigned a unique ID.
+Each subdirectory within "cmd" containing a main.go file will become a runnable command available for use when you deploy your build - reco deploy run <build_ID> <my_cmd>.
 `,
 	Run: startBuild,
 }

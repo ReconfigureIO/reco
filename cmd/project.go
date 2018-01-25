@@ -15,8 +15,7 @@ var (
 		Aliases: []string{"p", "prj", "projects"},
 		Short:   "Manage your projects.",
 		Long: `Manage your projects.
-You can create a new project, set a project to work within and get the name of
-the currently active project.`,
+You can create a new project, set a project to work within and get the name of the currently active project.`,
 		PersistentPreRun: initializeCmd,
 	}
 
@@ -25,8 +24,7 @@ the currently active project.`,
 		Aliases: []string{"c", "new"},
 		Short:   "Create a new project",
 		Long: `Create a new project.
-		Once you have created a project it will be available to set as active for
-		any location. To set an active project, use 'reco project set <my_project>'.
+		Once you have created a project it will be available to set as active for any location. To set an active project, use 'reco project set <my_project>'.
 `,
 		Run: createProject,
 	}
@@ -35,11 +33,9 @@ the currently active project.`,
 		Use:   "set name",
 		Short: "Set the active project for your current location",
 		Long: `Set the active project for your current location.
-Simulations, builds, graphs and deployments created after setting an active
-project will be associated with this project. You can verify the active project
-with "reco project list" or "reco project get".
-This is a directory level configuration so you need to set a project for each
-new location you work in.
+Simulations, builds, graphs and deployments created after setting an active project will be associated with that project.
+You can verify the active project with "reco project list" or "reco project get".
+This is a directory level configuration so you need to set a project for each new location you work in.
 `,
 		Run: setProject,
 	}
@@ -48,8 +44,7 @@ new location you work in.
 		Use:   "get",
 		Short: "Get the name of the active project",
 		Long: `Get the name of the active project for your current location.
-This is a directory level configuration so you need to check in each new
-location you work in.
+This is a directory level configuration so you need to check in each new location you work in.
 `,
 		Run: getProject,
 	}
@@ -59,8 +54,7 @@ location you work in.
 		Aliases: []string{"ls", "lst", "lists"},
 		Short:   "List all projects for your account.",
 		Long:    `List all projects for your account.
-If you have an active project set for your current location this will be
-highlighted in the list.`,
+If you have an active project set for your current location this will be highlighted in the list.`,
 		Run:     listProject,
 		PostRun: listPostRun,
 	}
