@@ -16,7 +16,7 @@ import (
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/abiosoft/goutils/env"
 	"github.com/reconfigureio/archiver"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 var dependencies = map[string]dep{

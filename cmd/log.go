@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/ReconfigureIO/reco"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 var logPreRun = func(cmd *cobra.Command, args []string) {

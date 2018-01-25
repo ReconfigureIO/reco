@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ReconfigureIO/reco"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 	"github.com/spf13/viper"
 )
 
