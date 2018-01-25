@@ -24,8 +24,9 @@ the currently active project.`,
 		Use:     "create",
 		Aliases: []string{"c", "new"},
 		Short:   "Create a new project",
-		Long: `Create a new project. Once you have created a project it will be available to set as active for any location.
-To set an active project, use 'reco project set <my_project>'.
+		Long: `Create a new project.
+		Once you have created a project it will be available to set as active for
+		any location. To set an active project, use 'reco project set <my_project>'.
 `,
 		Run: createProject,
 	}
@@ -34,9 +35,11 @@ To set an active project, use 'reco project set <my_project>'.
 		Use:   "set name",
 		Short: "Set the active project for your current location",
 		Long: `Set the active project for your current location.
-Simulations, builds, graphs and deployments created after setting an active project will be associated with this project.
-You can verify the active project with "reco project list" or "reco project get".
-This is a directory level configuration so you need to set a project for each new location you work in.
+Simulations, builds, graphs and deployments created after setting an active
+project will be associated with this project. You can verify the active project
+with "reco project list" or "reco project get".
+This is a directory level configuration so you need to set a project for each
+new location you work in.
 `,
 		Run: setProject,
 	}
@@ -44,8 +47,9 @@ This is a directory level configuration so you need to set a project for each ne
 	projectCmdGet = &cobra.Command{
 		Use:   "get",
 		Short: "Get the name of the active project",
-		Long: `Get the name of the active project previously set with 'reco project set'.
-This is a directory level configuration so you need to check in each new location you work in.
+		Long: `Get the name of the active project for your current location.
+This is a directory level configuration so you need to check in each new
+location you work in.
 `,
 		Run: getProject,
 	}
@@ -54,7 +58,9 @@ This is a directory level configuration so you need to check in each new locatio
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
 		Short:   "List all projects for your account.",
-		Long:    `List all projects for your account. If you have an active project set for your current location this will be highlighted in the list.`,
+		Long:    `List all projects for your account.
+If you have an active project set for your current location this will be
+highlighted in the list.`,
 		Run:     listProject,
 		PostRun: listPostRun,
 	}
