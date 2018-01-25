@@ -8,8 +8,8 @@ import (
 var projectCmd = &cobra.Command{
 	Use:     "project",
 	Aliases: []string{"p", "prj", "projects"},
-	Short:   "Manage projects",
-	Long: `Manage projects.
+	Short:   "Manage your projects.",
+	Long: `Manage your projects.
 You can create a new project, set and get the active project.`,
 	PersistentPreRun: initializeCmd,
 }

@@ -11,7 +11,7 @@ var authCmd = &cobra.Command{
 	Short:   "Authenticate your account",
 	Long: `Authenticate your account.
 
-You will be directed to reconfigure.io to copy your API token.
+You will be directed to your reconfigure.io dashboard to copy your API key.
 An oauth login flow may be required to access reconfigure.io.
 `,
 	Run:    auth,

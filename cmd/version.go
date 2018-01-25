@@ -14,7 +14,7 @@ var BuildInfo struct {
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show app version",
+	Short: "Show which version of reco you are currently running.",
 	Run:   version,
 }
 
