@@ -32,7 +32,7 @@ func init() {
 
 	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genLogSubcommand("build", "Build"))
+	buildCmd.AddCommand(genLogSubcommand("build", "build"))
 	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
 

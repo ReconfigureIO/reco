@@ -200,8 +200,8 @@ func (p *clientImpl) Init() error {
 func (p *clientImpl) Auth(token string) error {
 	authURL := fmt.Sprint("http://app.reconfigure.io/dashboard")
 	if token == "" {
-		fmt.Println("Copy the token after authentication at", authURL)
-		fmt.Print("Token: ")
+		fmt.Println("Visit your dashboard and copy your API key:", authURL)
+		fmt.Print("Enter your API key here: ")
 		if _, err := fmt.Scanln(&token); err != nil {
 			return err
 		}
