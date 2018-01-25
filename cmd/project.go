@@ -16,7 +16,8 @@ var (
 		Aliases: []string{"p", "prj", "projects"},
 		Short:   "Manage your projects.",
 		Long: `Manage your projects.
-You can create a new project, set and get the active project.`,
+You can create a new project, set a project to work within and get the name of
+the currently active project.`,
 		PersistentPreRun: initializeCmd,
 	}
 
@@ -24,32 +25,31 @@ You can create a new project, set and get the active project.`,
 		Use:     "create",
 		Aliases: []string{"c", "new"},
 		Short:   "Create a new project",
-		Long: `Create a new project. All future builds with be associated with this
-project if you do not have any other projects.
+		Long: `Create a new project. Once you have created a project it will be available to set as active for any project.
 
-To set the active project, use 'reco project set'.
+To set an active project, use 'reco project set <my_project>'.
 `,
 		Run: createProject,
 	}
 
 	projectCmdSet = &cobra.Command{
 		Use:   "set name",
-		Short: "Set project to use for builds",
-		Long: `Set project to use for builds.
-Builds created afterwards will be associated with this project.
-You can verify active project with "reco project list".
+		Short: "Set the project to use for your current location",
+		Long: `Set the project to use for your current location.
+Simulations and builds created afterwards will be associated with this project.
+You can verify the active project with "reco project list" or "reco project get".
 
-This is a directory level config.
+This is a directory level configuration so you need to set a project for each new location you work in.
 `,
 		Run: setProject,
 	}
 
 	projectCmdGet = &cobra.Command{
 		Use:   "get",
-		Short: "Get the active project",
-		Long: `Get the active project previously set with 'reco project set'.
+		Short: "Get the name of the active project",
+		Long: `Get the name of the active project previously set with 'reco project set'.
 
-This is a directory level config.
+This is a directory level configuration so you need to check in each new location you work in.
 `,
 		Run: getProject,
 	}
@@ -57,8 +57,8 @@ This is a directory level config.
 	projectCmdList = &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
-		Short:   fmt.Sprintf("List all %s for your current project.", "project"),
-		Long:    fmt.Sprintf("List all %s for your current project - status information, start times and unique IDs will be displayed.", "project"),
+		Short:   "List all projects for your account.",
+		Long:    `List all projects for your account. If you have an active project set this will be highlighted.`,
 		Run:     listProject,
 		PostRun: listPostRun,
 	}
