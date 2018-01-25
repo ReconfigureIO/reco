@@ -13,7 +13,7 @@ var (
 	projectCmd = &cobra.Command{
 		Use:     "project",
 		Aliases: []string{"p", "prj", "projects"},
-		Short:   "Manage your projects.",
+		Short:   "Manage your projects",
 		Long: `Manage your projects.
 You can create a new project, set a project to work within and get the name of the currently active project.`,
 		PersistentPreRun: initializeCmd,
@@ -52,7 +52,7 @@ This is a directory level configuration so you need to check in each new locatio
 	projectCmdList = &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
-		Short:   "List all projects for your account.",
+		Short:   "List all projects for your account",
 		Long:    `List all projects for your account.
 If you have an active project set for your current location this will be highlighted in the list.`,
 		Run:     listProject,

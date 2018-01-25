@@ -29,8 +29,8 @@ Each subdirectory within "cmd" containing a main.go file will become a runnable 
 }
 
 func init() {
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds.")
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation.")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation")
 
 	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
