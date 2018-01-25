@@ -19,7 +19,7 @@ var testCmdStart = &cobra.Command{
 
 func init() {
 	testCmd := genDevCommand("sim", "simulation", "simulation", "simulations", "test", "tests", "t")
-	testCmd.AddCommand(genListSubcommand("simulations", "Simulation"))
+	testCmd.AddCommand(genListSubcommand("simulations", "Test"))
 	testCmd.AddCommand(genLogSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(genStopSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(testCmdStart)
