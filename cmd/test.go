@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var testCmdStart = &cobra.Command{
@@ -18,7 +18,7 @@ var testCmdStart = &cobra.Command{
 }
 
 func init() {
-	testCmd := genDevCommand("sim", "simulation", "simulations", "test", "tests", "t")
+	testCmd := genDevCommand("sim", "simulation", "simulation", "simulations", "test", "tests", "t")
 	testCmd.AddCommand(genListSubcommand("simulations", "Simulation"))
 	testCmd.AddCommand(genLogSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(genStopSubcommand("simulation", "Simulation"))

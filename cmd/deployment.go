@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var deploymentVars = struct {
@@ -53,7 +53,7 @@ var deploymentCmdConnect = &cobra.Command{
 func init() {
 	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "Wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
 
-	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
+	deploymentCmd := genDevCommand("deploy", "deployment", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(genLogSubcommand("deployment", "deploy"))
 	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))

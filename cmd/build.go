@@ -4,9 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var buildVars = struct {
@@ -30,7 +30,7 @@ func init() {
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds.")
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation.")
 
-	buildCmd := genDevCommand("build", "b", "builds")
+	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
 	buildCmd.AddCommand(genLogSubcommand("build", "Build"))
 	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
