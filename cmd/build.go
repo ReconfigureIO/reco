@@ -35,6 +35,7 @@ func init() {
 	buildCmd.AddCommand(genLogSubcommand("build", "build"))
 	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
+	buildCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(buildCmd)
 }

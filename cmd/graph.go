@@ -4,9 +4,9 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var graphCmd = &cobra.Command{
@@ -47,6 +47,7 @@ func init() {
 		graphCmdOpen,
 		genListSubcommand("graphs", "Graph"),
 	)
+	graphCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(graphCmd)
 }

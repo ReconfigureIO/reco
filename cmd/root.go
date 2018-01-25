@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco"
 	"github.com/spf13/viper"
 )
 
@@ -40,7 +40,6 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `Config file (default "`+filepath.Join(getConfigDir(), "reco.yml")+`")`)
 	RootCmd.PersistentFlags().StringVar(&provider, "provider", "", "Service provider")
 	RootCmd.PersistentFlags().StringVarP(&srcDir, "source", "s", "", `Source directory (default is current directory "`+getCurrentDir()+`")`)
-	RootCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	// hide provider and config. It is for internal use
 	RootCmd.PersistentFlags().MarkHidden("provider")

@@ -23,6 +23,7 @@ func init() {
 	testCmd.AddCommand(genLogSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(genStopSubcommand("simulation", "Simulation"))
 	testCmd.AddCommand(testCmdStart)
+	testCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(testCmd)
 }

@@ -59,6 +59,7 @@ func init() {
 	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
+	deploymentCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(deploymentCmd)
 }
