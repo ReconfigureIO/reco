@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"strconv"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/ReconfigureIO/reco/printer"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var listVars struct {
