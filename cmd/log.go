@@ -5,8 +5,8 @@ import (
 	"os"
 	"reflect"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
-	"github.com/spf13/cobra"
 )
 
 var logPreRun = func(cmd *cobra.Command, args []string) {
@@ -15,15 +15,15 @@ var logPreRun = func(cmd *cobra.Command, args []string) {
 	}
 }
 
-func genLogSubcommand(name string, job string) *cobra.Command {
+func genLogSubcommand(commandName string, jobType string) *cobra.Command {
 	return &cobra.Command{
-		Use:     "log ID",
+		Use:     fmt.Sprintf("log [%s_ID]", jobType),
 		Aliases: []string{"logs"},
-		Short:   fmt.Sprintf("Stream logs for a %s", name),
-		Long:    fmt.Sprintf("Stream logs for a %s previously started with 'reco %s run'", name, name),
+		Short:   fmt.Sprintf("Stream logs for a %s", jobType),
+		Long:    fmt.Sprintf("Stream logs for a %s previously started with 'reco %s run'.", jobType, commandName),
 		PreRun:  logPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName(job).Call(nil)[0].Interface()
+			l := reflect.ValueOf(tool).MethodByName(commandName).Call(nil)[0].Interface()
 			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
 				exitWithError(err)
 			}

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 // authCmd represents the auth command
@@ -11,8 +11,8 @@ var authCmd = &cobra.Command{
 	Short:   "Authenticate your account",
 	Long: `Authenticate your account.
 
-You will be directed to reconfigure.io to copy your API token.
-An oauth login flow may be required to access reconfigure.io.
+You will be directed to your Reconfigure.io dashboard to copy your API key.
+An oauth login flow may be required to access the dashboard.
 `,
 	Run:    auth,
 	PreRun: initializeCmd,

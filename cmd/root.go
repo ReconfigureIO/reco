@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -21,8 +21,8 @@ var errInvalidSourceDirectory = errors.New("invalid source directory. Directory 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "reco",
-	Short: "reco is the CLI utility for Reconfigure.io",
-	Long:  `reco is the CLI utility for Reconfigure.io`,
+	Short: "reco is the Reconfigure.io command line tool",
+	Long:  `reco is the Reconfigure.io command line tool`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -37,10 +37,9 @@ func init() {
 	// template
 	RootCmd.SetUsageTemplate(usageTemplate)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `config file (default "`+filepath.Join(getConfigDir(), "reco.yml")+`")`)
-	RootCmd.PersistentFlags().StringVar(&provider, "provider", "", "service provider")
-	RootCmd.PersistentFlags().StringVarP(&srcDir, "source", "s", "", `source directory (default is current directory "`+getCurrentDir()+`")`)
-	RootCmd.PersistentFlags().StringVar(&project, "project", project, "project to use. If unset, the active project is used")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `Config file (default "`+filepath.Join(getConfigDir(), "reco.yml")+`")`)
+	RootCmd.PersistentFlags().StringVar(&provider, "provider", "", "Service provider")
+	RootCmd.PersistentFlags().StringVarP(&srcDir, "source", "s", "", `Source directory (default is current directory "`+getCurrentDir()+`")`)
 
 	// hide provider and config. It is for internal use
 	RootCmd.PersistentFlags().MarkHidden("provider")

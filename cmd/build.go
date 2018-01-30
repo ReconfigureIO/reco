@@ -4,9 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
 )
 
 var buildVars = struct {
@@ -21,24 +21,23 @@ var buildCmdStart = &cobra.Command{
 	Use:     "run",
 	Aliases: []string{"r", "start", "starts", "create"},
 	Short:   "Start a new build",
-	Long: `Start a new build. The build (if successful) can be deployed afterwards.
-
-Your project should have a top-level directory "cmd". On build, each
-subdirectory in "cmd" with a main.go will be built and put into your
-$PATH automatically.
+	Long: `Start a new build.
+A successful build creates an image that can be deployed to an F1 instance. Your FPGA code will be compiled, optimized and assigned a unique ID.
+Each subdirectory within "cmd" containing a main.go file will become a runnable command available for use when you deploy your build - reco deploy run <build_ID> <my_cmd>.
 `,
 	Run: startBuild,
 }
 
 func init() {
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "wait for the build to complete. If false, it only kicks off the build without waiting.")
-	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "force build. Ignore source code validation.")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds")
+	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation")
 
-	buildCmd := genDevCommand("build", "b", "builds")
+	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genLogSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genStopSubcommand("builds", "Build"))
+	buildCmd.AddCommand(genLogSubcommand("build", "build"))
+	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
+	buildCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(buildCmd)
 }

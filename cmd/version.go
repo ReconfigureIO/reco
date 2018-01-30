@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 // BuildInfo is the build information of reco binary. This is
@@ -14,7 +14,7 @@ var BuildInfo struct {
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show app version",
+	Short: "Show which version of reco you are currently running.",
 	Run:   version,
 }
 

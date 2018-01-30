@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion [file]",
-	Short: "Generate bash completion",
+	Short: "Generate a bash completion script",
 	Run:   completion,
 }
 

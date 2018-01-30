@@ -1,5 +1,5 @@
-hash: d4c01a8df12388a9100aa42d36b7f97a602dea21a2a3d0bd65f164c0243029d1
-updated: 2018-01-08T12:50:53.010132266Z
+hash: 3f8fd0f68a47d3a138a529584f903f6f425c73ba70d2cd2a9483393d489a6d0d
+updated: 2018-01-25T10:53:04.460875406Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -59,6 +59,8 @@ imports:
   version: 1d5374a61d4959af383169ff31db1cd752c2d69a
 - name: github.com/reconfigureio/archiver
   version: ec41b3af3a74d34f368868a57ef01ced8b8e9568
+- name: github.com/ReconfigureIO/cobra
+  version: 3b4ffe4b37381957c28404f5e069ba5bca001d36
 - name: github.com/skratchdot/open-golang
   version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
   subpackages:
@@ -69,8 +71,6 @@ imports:
   - mem
 - name: github.com/spf13/cast
   version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
-- name: github.com/spf13/cobra
-  version: ccaecb155a2177302cb56cae929251a256d0f646
 - name: github.com/spf13/jwalterweatherman
   version: 12bd96e66386c1960ab0f74ced1362f66f552f7b
 - name: github.com/spf13/pflag

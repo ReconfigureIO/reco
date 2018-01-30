@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
 )
 
 var deploymentVars = struct {
@@ -13,51 +13,53 @@ var deploymentVars = struct {
 }
 
 var deploymentCmdStart = &cobra.Command{
-	Use:     "run [flags] image executable -- [args]",
+	Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
 	Aliases: []string{"r", "start", "starts"},
-	Short:   "Run a command from a build",
-	Long: `Run a command from a build on a machine equipped with an FPGA.
+	Short:   "Deploy a build image and command to an F1 instance",
+	Long: `Deploy a build image and run a command from that build on an F1 instance.
 
-Defining commands:
+More about commands:
 
-Your project should have a top-level directory "cmd". On build, each
-subdirectory in "cmd" with a main.go will be built and put into your
-$PATH automatically.
+Reconfigure.io programs have a main.go at the top level and a top level
+directory "cmd". On build, the top level main.go will be compiled and optimized
+into a deployable image, and each subdirectory in "cmd" containing a main.go
+file will be available as a runnable command for the host CPU.
 
-For example, if you have a file at "cmd/my-cmd/main.go", you will have
-a binary named "my-cmd" available to you.
+For example, if your program has a file at "cmd/my-cmd/main.go", you will have
+a runnable command named "my-cmd" available to you.
 
 Passing arguments:
 
 Arguments that are not captured by this tool are passed to the command.
 
-For example, "reco run my-cmd 1" would pass the argument "1" to your
-"my-cmd" binary. It's equivalent to calling "my-cmd 1". However, some
-of your arguments may conflict with this binary. If this is the case,
+For example, "reco deploy run my-cmd 1" would pass the argument "1" to
+"my-cmd". It's equivalent to calling "my-cmd 1". However, some
+of your arguments may conflict with this command. If this is the case,
 use "--" to specify that all further arguments should be provided to
-your command instead. The two forms are equivalent:
+your command. The two forms are equivalent:
 "reco run my-image my-cmd -- 1" and "reco run my-image my-cmd 1"
 `,
 	Run: startDeployment,
 }
 
 var deploymentCmdConnect = &cobra.Command{
-	Use:     "connect ID",
+	Use:     "connect <deploy_ID>",
 	Aliases: []string{"c", "connects"},
 	Short:   "Connect to a running deployment",
-	Long:    "Connect to a running deployment",
+	Long:    "Connect to a running deployment.",
 	Run:     connectDeployment,
 }
 
 func init() {
-	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "wait for the run to complete. If false, it only starts the command without waiting for it to complete.")
+	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "Wait for the run to complete. If false, it only starts the command without waiting for it to complete")
 
-	deploymentCmd := genDevCommand("deploy", "d", "dep", "deps", "deployments", "deployment")
+	deploymentCmd := genDevCommand("deploy", "deployment", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
-	deploymentCmd.AddCommand(genLogSubcommand("deployments", "Deployment"))
-	deploymentCmd.AddCommand(genStopSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genLogSubcommand("deploy", "deployment"))
+	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
+	deploymentCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(deploymentCmd)
 }

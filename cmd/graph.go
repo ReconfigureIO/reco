@@ -4,17 +4,17 @@ import (
 	"os/exec"
 	"runtime"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
 )
 
 var graphCmd = &cobra.Command{
 	Use:     "graph",
 	Aliases: []string{"g", "graphs"},
-	Short:   "Manage graphs",
-	Long: `Manage graphs.
-You can generate graph, list graphs and open a generated graph.`,
+	Short:   "Manage your graphs",
+	Long: `Manage your graphs.
+You can generate a dataflow graph, list your graphs or open a previously generated graph.`,
 	PersistentPreRun: initializeCmd,
 	Annotations: map[string]string{
 		"type": "dev",
@@ -24,9 +24,9 @@ You can generate graph, list graphs and open a generated graph.`,
 var graphCmdGenerate = &cobra.Command{
 	Use:     "gen",
 	Aliases: []string{"g", "generate"},
-	Short:   "Generate graph",
-	Long: `Generate a graph for source code.
-This usually take few minutes.
+	Short:   "Generate a graph",
+	Long: `Generate a dataflow graph for your source code.
+This usually takes few minutes.
 `,
 	Run: generateGraph,
 }
@@ -36,7 +36,7 @@ var graphCmdOpen = &cobra.Command{
 	Aliases: []string{"o"},
 	Short:   "Open a generated graph",
 	Long: `Open a generated graph.
-This attempts to use the default pdf viewer to open the graph.
+This attempts to use your default pdf viewer to open the graph.
 `,
 	Run: openGraph,
 }
@@ -47,6 +47,7 @@ func init() {
 		graphCmdOpen,
 		genListSubcommand("graphs", "Graph"),
 	)
+	graphCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(graphCmd)
 }
@@ -84,7 +85,7 @@ func openGraph(_ *cobra.Command, args []string) {
 	}
 	// could not open with default pdf handler.
 	if cmd == nil || cmd.Run() != nil {
-		logger.Std.Printf("Graph is available at %s", file)
+		logger.Std.Printf("Your graph is available here: %s", file)
 		return
 	}
 }

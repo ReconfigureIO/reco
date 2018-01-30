@@ -1,59 +1,71 @@
 package cmd
 
 import (
+	"reflect"
+	"strconv"
+
+	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
 )
 
-var projectCmd = &cobra.Command{
-	Use:     "project",
-	Aliases: []string{"p", "prj", "projects"},
-	Short:   "Manage projects",
-	Long: `Manage projects.
-You can create a new project, set and get the active project.`,
-	PersistentPreRun: initializeCmd,
-}
+var (
+	projectCmd = &cobra.Command{
+		Use:     "project",
+		Aliases: []string{"p", "prj", "projects"},
+		Short:   "Manage your projects",
+		Long: `Manage your projects.
+You can create a new project, set a project to work within and get the name of the currently active project.`,
+		PersistentPreRun: initializeCmd,
+	}
 
-var projectCmdCreate = &cobra.Command{
-	Use:     "create",
-	Aliases: []string{"c", "new"},
-	Short:   "Create a new project",
-	Long: `Create a new project. All future builds with be associated with this
-project if you do not have any other projects.
-
-To set the active project, use 'reco project set'.
+	projectCmdCreate = &cobra.Command{
+		Use:     "create",
+		Aliases: []string{"c", "new"},
+		Short:   "Create a new project",
+		Long: `Create a new project.
+		Once you have created a project it will be available to set as active for any location. To set an active project, use 'reco project set <my_project>'.
 `,
-	Run: createProject,
-}
+		Run: createProject,
+	}
 
-var projectCmdSet = &cobra.Command{
-	Use:   "set name",
-	Short: "Set project to use for builds",
-	Long: `Set project to use for builds.
-Builds created afterwards will be associated with this project.
-You can verify active project with "reco project list".
-
-This is a directory level config.
+	projectCmdSet = &cobra.Command{
+		Use:   "set name",
+		Short: "Set the active project for your current location",
+		Long: `Set the active project for your current location.
+Simulations, builds, graphs and deployments created after setting an active project will be associated with that project.
+You can verify the active project with "reco project list" or "reco project get".
+This is a directory level configuration so you need to set a project for each new location you work in.
 `,
-	Run: setProject,
-}
+		Run: setProject,
+	}
 
-var projectCmdGet = &cobra.Command{
-	Use:   "get",
-	Short: "Get the active project",
-	Long: `Get the active project previously set with 'reco project set'.
-
-This is a directory level config.
+	projectCmdGet = &cobra.Command{
+		Use:   "get",
+		Short: "Get the name of the active project",
+		Long: `Get the name of the active project for your current location.
+This is a directory level configuration so you need to check in each new location you work in.
 `,
-	Run: getProject,
-}
+		Run: getProject,
+	}
+
+	projectCmdList = &cobra.Command{
+		Use:     "list",
+		Aliases: []string{"ls", "lst", "lists"},
+		Short:   "List all projects for your account",
+		Long:    `List all projects for your account.
+If you have an active project set for your current location this will be highlighted in the list.`,
+		Run:     listProject,
+		PostRun: listPostRun,
+	}
+)
 
 func init() {
 	projectCmd.AddCommand(
 		projectCmdSet,
 		projectCmdGet,
 		projectCmdCreate,
-		genListSubcommand("projects", "Project"),
+		projectCmdList,
 	)
 
 	RootCmd.AddCommand(projectCmd)
@@ -83,4 +95,25 @@ func getProject(cmd *cobra.Command, args []string) {
 		exitWithError(err)
 	}
 	logger.Std.Println(name)
+}
+
+func listProject(cmd *cobra.Command, args []string) {
+	filters := reco.M{}
+	if listVars.status != "" {
+		filters["status"] = listVars.status
+	}
+	if listVars.limit != 0 {
+		filters["limit"] = strconv.Itoa(listVars.limit)
+	}
+	if listVars.allProjects {
+		filters["all"] = "1"
+	}
+	if listVars.public {
+		filters["public"] = "1"
+	}
+
+	listVars.resourceType = "project"
+	l := reflect.ValueOf(tool).MethodByName("Project").Call(nil)[0].Interface()
+	listVars.table, listVars.err = l.(lister).List(filters)
+	listCmdAddFlags(cmd)
 }

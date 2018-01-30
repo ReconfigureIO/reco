@@ -16,7 +16,7 @@ import (
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/abiosoft/goutils/env"
 	"github.com/reconfigureio/archiver"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 var dependencies = map[string]dep{
@@ -26,7 +26,7 @@ var dependencies = map[string]dep{
 // checkCmd represents the version command
 var checkCmd = &cobra.Command{
 	Use:    "check",
-	Short:  "Verify that the compiler can build your Go source",
+	Short:  "Verify that the Reconfigure.io compiler can build your Go source code.",
 	Run:    check,
 	PreRun: initializeCmd,
 	Annotations: map[string]string{
@@ -39,7 +39,7 @@ var checkCmdVars struct {
 }
 
 func init() {
-	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for, and install dependency updates")
+	checkCmd.PersistentFlags().BoolVar(&checkCmdVars.update, "update", false, "check for and install dependency updates")
 	RootCmd.AddCommand(checkCmd)
 }
 
@@ -52,10 +52,10 @@ func check(_ *cobra.Command, args []string) {
 	}
 	switch dep.Installed() {
 	case statusUpdateAvailable:
-		fmt.Println("check dependency update available, updating...")
+		fmt.Println("check update available, updating...")
 		update()
 	case statusNotInstalled:
-		fmt.Println("check dependency not found, installing...")
+		fmt.Println("check not found, installing...")
 		update()
 	}
 	srcFile := filepath.Join(srcDir, "main.go")

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ReconfigureIO/reco/logger"
-	"github.com/spf13/cobra"
+	"github.com/ReconfigureIO/cobra"
 )
 
 // configCmd represents the config command
