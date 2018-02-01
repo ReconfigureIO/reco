@@ -1,32 +1,56 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
 )
 
-var buildVars = struct {
-	wait  bool
-	force bool
-}{
-	wait: true,
-}
+var (
+	buildVars = struct {
+		wait  bool
+		force bool
+	}{
+		wait: true,
+	}
 
-// buildCmd represents the upload command
-var buildCmdStart = &cobra.Command{
-	Use:     "run",
-	Aliases: []string{"r", "start", "starts", "create"},
-	Short:   "Start a new build",
-	Long: `Start a new build.
-A successful build creates an image that can be deployed to an F1 instance. Your FPGA code will be compiled, optimized and assigned a unique ID.
-Each subdirectory within "cmd" containing a main.go file will become a runnable command available for use when you deploy your build - reco deploy run <build_ID> <my_cmd>.
-`,
-	Run: startBuild,
-}
+	// buildCmd represents the upload command
+	buildCmdStart = &cobra.Command{
+		Use:     "run",
+		Aliases: []string{"r", "start", "starts", "create"},
+		Short:   "Start a new build",
+		Long: `Start a new build.
+	A successful build creates an image that can be deployed to an F1 instance. Your FPGA code will be compiled, optimized and assigned a unique ID.
+	Each subdirectory within "cmd" containing a main.go file will become a runnable command available for use when you deploy your build - reco deploy run <build_ID> <my_cmd>.
+	`,
+		Run: startBuild,
+	}
+
+	buildCmdLog = &cobra.Command{
+		Use:     fmt.Sprintf("log [build_ID]"),
+		Aliases: []string{"logs"},
+		Short:   fmt.Sprintf("Stream logs for a build"),
+		Long:    fmt.Sprintf("Stream logs for a build previously started with 'reco build run'."),
+		PreRun:  testLogPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Build").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
+				exitWithError(err)
+			}
+		},
+	}
+
+	buildLogPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
+)
 
 func init() {
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds")
@@ -34,7 +58,7 @@ func init() {
 
 	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
-	buildCmd.AddCommand(genLogSubcommand("build", "build"))
+	buildCmd.AddCommand(buildCmdLog)
 	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
 	buildCmd.AddCommand(buildCmdStart)
 	buildCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
