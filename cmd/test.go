@@ -41,13 +41,34 @@ var (
 			exitWithError("ID required")
 		}
 	}
+
+	testCmdStop = &cobra.Command{
+		Use:     "stop [simulation_ID]",
+		Aliases: []string{"s", "stp", "stops"},
+		Short:   fmt.Sprintf("Stop a simulation"),
+		Long:    fmt.Sprintf("Stop a simulation previously started with 'reco sim run'"),
+		PreRun:  testStopPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Test").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Stop(args[0]); err != nil {
+				exitWithError(err)
+			}
+			logger.Std.Printf("Simulation stopped successfully")
+		},
+	}
+
+	testStopPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
 )
 
 func init() {
 	testCmd := genDevCommand("sim", "simulation", "simulation", "simulations", "test", "tests", "t")
 	testCmd.AddCommand(genListSubcommand("simulations", "Test"))
 	testCmd.AddCommand(testCmdLog)
-	testCmd.AddCommand(genStopSubcommand("simulation", "Simulation"))
+	testCmd.AddCommand(testCmdStop)
 	testCmd.AddCommand(testCmdStart)
 	testCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 

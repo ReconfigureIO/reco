@@ -60,7 +60,7 @@ your command. The two forms are equivalent:
 		Aliases: []string{"logs"},
 		Short:   fmt.Sprintf("Stream logs for a deployment"),
 		Long:    fmt.Sprintf("Stream logs for a deployment previously started with 'reco deploy run'."),
-		PreRun:  testLogPreRun,
+		PreRun:  deploymentLogPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
 			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
 			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
@@ -74,6 +74,27 @@ your command. The two forms are equivalent:
 			exitWithError("ID required")
 		}
 	}
+
+	deploymentCmdStop = &cobra.Command{
+		Use:     "stop [deployment_ID]",
+		Aliases: []string{"s", "stp", "stops"},
+		Short:   fmt.Sprintf("Stop a deployment"),
+		Long:    fmt.Sprintf("Stop a deployment previously started with 'reco deploy run'"),
+		PreRun:  deploymentStopPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Stop(args[0]); err != nil {
+				exitWithError(err)
+			}
+			logger.Std.Printf("deployment stopped successfully")
+		},
+	}
+
+	deploymentStopPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
 )
 
 func init() {
@@ -82,7 +103,7 @@ func init() {
 	deploymentCmd := genDevCommand("deploy", "deployment", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
 	deploymentCmd.AddCommand(deploymentCmdLog)
-	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))
+	deploymentCmd.AddCommand(deploymentCmdStop)
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 	deploymentCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")

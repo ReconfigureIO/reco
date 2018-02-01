@@ -36,7 +36,7 @@ var (
 		Aliases: []string{"logs"},
 		Short:   fmt.Sprintf("Stream logs for a build"),
 		Long:    fmt.Sprintf("Stream logs for a build previously started with 'reco build run'."),
-		PreRun:  testLogPreRun,
+		PreRun:  buildLogPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
 			l := reflect.ValueOf(tool).MethodByName("Build").Call(nil)[0].Interface()
 			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
@@ -50,6 +50,27 @@ var (
 			exitWithError("ID required")
 		}
 	}
+
+	buildCmdStop = &cobra.Command{
+		Use:     "stop [build_ID]",
+		Aliases: []string{"s", "stp", "stops"},
+		Short:   fmt.Sprintf("Stop a build"),
+		Long:    fmt.Sprintf("Stop a build previously started with 'reco build run'"),
+		PreRun:  buildStopPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Build").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Stop(args[0]); err != nil {
+				exitWithError(err)
+			}
+			logger.Std.Printf("build stopped successfully")
+		},
+	}
+
+	buildStopPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
 )
 
 func init() {
@@ -59,7 +80,7 @@ func init() {
 	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
 	buildCmd.AddCommand(buildCmdLog)
-	buildCmd.AddCommand(genStopSubcommand("build", "Build"))
+	buildCmd.AddCommand(buildCmdStop)
 	buildCmd.AddCommand(buildCmdStart)
 	buildCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
