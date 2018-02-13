@@ -46,6 +46,7 @@ var (
 	errAuthRequired           = errors.New("Authentication required. Run 'reco auth' to authenticate")
 	errAuthFailed             = errors.New("Authentication failed. Run 'reco auth' to try again")
 	errAuthFailedInvalidToken = errors.New("Authentication failed. The token you entered is invalid")
+	errAuthFileWriteFailed    = errors.New("Authentication failed. Could not write token to disk")
 	errProjectNotSet          = errors.New("Project not set. Run 'reco project set' to set one")
 	errProjectNotCreated      = errors.New("No projects found. Run 'reco project create' to create one")
 	errProjectNotFound        = errors.New("Project not found. Run 'reco project list' to view all your available projects")
@@ -219,9 +220,13 @@ func (p *clientImpl) Auth(token string) error {
 	if err != nil {
 		return errAuthFailedInvalidToken
 	} else {
+		err = p.saveAuth()
+		if err != nil {
+			return errAuthFileWriteFailed
+		}
 		logger.Info.Println("Authentication successful")
 	}
-	return p.saveAuth()
+	return nil
 }
 
 func jsonToReader(j interface{}) (io.Reader, error) {
