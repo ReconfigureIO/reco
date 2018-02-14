@@ -1,5 +1,5 @@
 hash: 3f8fd0f68a47d3a138a529584f903f6f425c73ba70d2cd2a9483393d489a6d0d
-updated: 2018-01-25T10:53:04.460875406Z
+updated: 2018-02-14T16:41:54.578618475Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -19,6 +19,14 @@ imports:
   version: 4da3e2cfbabc9f751898f250b49f2439785783a1
 - name: github.com/golang/snappy
   version: 553a641470496b2327abcac10b36396bd98e45c9
+- name: github.com/google/go-github
+  version: 632a2caf6d3d380753dc7e422748202982ad18a3
+  subpackages:
+  - github
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
 - name: github.com/hashicorp/hcl
   version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
   subpackages:
@@ -31,6 +39,11 @@ imports:
   - json/parser
   - json/scanner
   - json/token
+- name: github.com/inconshreveable/go-update
+  version: 8152e7eb6ccf8679a64582a66b78519688d156ad
+  subpackages:
+  - internal/binarydist
+  - internal/osext
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/magiconair/properties
@@ -61,6 +74,8 @@ imports:
   version: ec41b3af3a74d34f368868a57ef01ced8b8e9568
 - name: github.com/ReconfigureIO/cobra
   version: 3b4ffe4b37381957c28404f5e069ba5bca001d36
+- name: github.com/ReconfigureIO/go-update
+  version: 8152e7eb6ccf8679a64582a66b78519688d156ad
 - name: github.com/skratchdot/open-golang
   version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
   subpackages:

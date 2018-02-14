@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/ReconfigureIO/cobra"
-	"github.com/ReconfigureIO/go-update"
+	//"github.com/ReconfigureIO/go-update"
 	"github.com/ReconfigureIO/reco/logger"
+	"github.com/google/go-github/github"
 )
 
 // updateCmd represents the update command
@@ -17,7 +20,7 @@ func init() {
 	RootCmd.AddCommand(updateCmd)
 }
 
-func version(cmd *cobra.Command, args []string) {
+func update(cmd *cobra.Command, args []string) {
 	if BuildInfo.Version == "" {
 		logger.Std.Println("reco version: untracked dev build")
 		logger.Std.Println("Cannot automatically update from this version")
@@ -27,7 +30,7 @@ func version(cmd *cobra.Command, args []string) {
 	if BuildInfo.BuildTime != "" {
 		logger.Std.Println("Built at: ", BuildInfo.BuildTime)
 	}
-	latest, err := latestRelease()
+	latest, err := latestRelease(github.NewClient(nil))
 	if err != nil {
 		logger.Std.Println("Could not retrieve latest verion info from Github: ", err)
 		return
@@ -43,4 +46,14 @@ func version(cmd *cobra.Command, args []string) {
 	}
 
 	return
+}
+
+// latestRelease gets the version number of the latest reco release
+func latestRelease(client *github.Client) (string, error) {
+	release, _, err := client.Repositories.GetLatestRelease(context.Background(), "ReconfigureIO", "reco")
+	if err != nil {
+		return "", err
+	}
+	logger.Std.Println("tagname is: ", *release.TagName)
+	return *release.TagName, nil
 }
