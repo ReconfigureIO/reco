@@ -26,7 +26,7 @@ func update(cmd *cobra.Command, args []string) {
 		logger.Std.Println("Cannot automatically update from this version")
 		return
 	}
-	logger.Std.Println("You are using reco version: ", BuildInfo.Version)
+	logger.Std.Println("You are using reco ", BuildInfo.Version)
 	if BuildInfo.BuildTime != "" {
 		logger.Std.Println("Built at: ", BuildInfo.BuildTime)
 	}
@@ -35,11 +35,11 @@ func update(cmd *cobra.Command, args []string) {
 		logger.Std.Println("Could not retrieve latest verion info from Github: ", err)
 		return
 	} else {
-		logger.Std.Println("The latest release is reco version: ", latest)
+		logger.Std.Println("The latest release is reco ", latest)
 	}
 
 	if latest != BuildInfo.Version {
-		logger.Std.Println("Run reco update --apply to upgrade", latest)
+		logger.Std.Println("Run reco update --apply to upgrade to ", latest)
 	} else {
 		logger.Std.Println("You are using the latest version")
 		return
@@ -54,6 +54,5 @@ func latestRelease(client *github.Client) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	logger.Std.Println("tagname is: ", *release.TagName)
 	return *release.TagName, nil
 }
