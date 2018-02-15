@@ -8,6 +8,7 @@ func main() {
 	cmd.BuildInfo.BuildTime = buildTime
 	cmd.BuildInfo.Builder = builder
 	cmd.BuildInfo.GoVersion = goversion
+	cmd.BuildInfo.Target = target
 
 	// execute
 	cmd.Execute()
@@ -18,4 +19,5 @@ var (
 	buildTime string
 	builder   string
 	goversion string
+	target    string
 )

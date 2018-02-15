@@ -17,6 +17,7 @@ LDFLAGS := -X 'main.version=$(VERSION)' \
            -X 'main.buildTime=$(BUILDTIME)' \
            -X 'main.builder=$(BUILDER)' \
            -X 'main.goversion=$(GOVERSION)' \
+           -X 'main.target=$(TARGET)' \
            -X 'github.com/ReconfigureIO/reco.alternativePlatformServer=$(API_SERVER)'
 CODEBUILD_NAME := "sample-snap-builder"
 GO_EXTENSION :=
@@ -77,8 +78,7 @@ dist/%-${VERSION}-${TARGET}.zip: build/${TARGET}/%${GO_EXTENSION} | dist
 packages: $(PKG_TARGETS)
 
 install: $(TARGETS)
-	cp ${TARGETS} /usr/local/bin
-
+	cp ${TARGETS} /go/bin
 clean:
 	rm -rf ./dist $(TARGETS) ./build
 

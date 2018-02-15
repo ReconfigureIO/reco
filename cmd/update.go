@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/ReconfigureIO/cobra"
-	//"github.com/ReconfigureIO/go-update"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/google/go-github/github"
 )
@@ -39,7 +40,14 @@ func update(cmd *cobra.Command, args []string) {
 	}
 
 	if latest != BuildInfo.Version {
-		logger.Std.Println("Run reco update --apply to upgrade to ", latest)
+		logger.Std.Println("Would you like to upgrade? (Y/N)")
+		upgrade := askForConfirmation()
+		if upgrade == true {
+			if err := tool.Upgrade(latest, BuildInfo.Target); err != nil {
+				exitWithError(err)
+			}
+		}
+
 	} else {
 		logger.Std.Println("You are using the latest version")
 		return
@@ -55,4 +63,36 @@ func latestRelease(client *github.Client) (string, error) {
 		return "", err
 	}
 	return *release.TagName, nil
+}
+
+func askForConfirmation() bool {
+	var response string
+	_, err := fmt.Scanln(&response)
+	if err != nil {
+		log.Fatal(err)
+	}
+	okayResponses := []string{"y", "Y", "yes", "Yes", "YES"}
+	nokayResponses := []string{"n", "N", "no", "No", "NO"}
+	if containsString(okayResponses, response) {
+		return true
+	} else if containsString(nokayResponses, response) {
+		return false
+	} else {
+		fmt.Println("Please type yes or no and then press enter:")
+		return askForConfirmation()
+	}
+}
+
+func posString(slice []string, element string) int {
+	for index, elem := range slice {
+		if elem == element {
+			return index
+		}
+	}
+	return -1
+}
+
+// containsString returns true iff slice contains element
+func containsString(slice []string, element string) bool {
+	return !(posString(slice, element) == -1)
 }

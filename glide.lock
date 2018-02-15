@@ -1,5 +1,5 @@
 hash: 3f8fd0f68a47d3a138a529584f903f6f425c73ba70d2cd2a9483393d489a6d0d
-updated: 2018-02-14T16:41:54.578618475Z
+updated: 2018-02-15T17:23:51.960619003Z
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -75,7 +75,7 @@ imports:
 - name: github.com/ReconfigureIO/cobra
   version: 3b4ffe4b37381957c28404f5e069ba5bca001d36
 - name: github.com/ReconfigureIO/go-update
-  version: 8152e7eb6ccf8679a64582a66b78519688d156ad
+  version: bf22c9dcdbb2c8d58308f9fbefc34ea0e64bd61d
 - name: github.com/skratchdot/open-golang
   version: 75fb7ed4208cf72d323d7d02fd1a5964a7a9073c
   subpackages:
