@@ -61,4 +61,12 @@ deploy:
     on:
       repo: ReconfigureIO/reco
       tags: true
-
+  - provider: releases
+    api_key:
+      secure: FEYvkPwUQqmdX1cDsLVYwz5chFSE5aIE9CoItq3NPfNTZEOZz2O2IVQzYuVe5uFen7llHIIuFriJb7jy5tWFqF0fJ5KBX12S9ewYcFV7PGMTwwnkYYZYVrbUYM+b6gCJDChMv3h5AES5ceVMingdctQTVCYq7EUZQEIlGM35iw9duRcIXK1PH6SO2oHzzj47ZwA+mt63HTqpUrsNHZHvbWwfNhKpSqZ05D1vmjGqmxejO/hBfTo+afBNp3VWETTz6W9qEwoxPILuC+sLsGbGiTn44Cv4u0xL3sK/vYWXBzC6LleofaKIEgxiY787Na7ReaXWdPwLjIiGFXSHG4c2O4Zkvgdq0TL/IVomlZMwns4rwMGfvQfuGWMpnyFYRAIuFC7Pk4rphEZwVl05x60tFJFQ5XA9VsW7tR4PEd5ZZVNtxUP+C7qdrLQdlIpYowSgf5CwYwKm5u80Pce8k/4/P5A6uKEVWN3bsBfX+7ZVSZ49bOtmtYL4o5a+NLY40pVp36gfo3XIk0ePQPyQVTsNdrWt5oHdRdcl9zRIy1oarq7C5Eqf5EnIIWssuvgFev3Gs3vMIY5aHJGOaEOr9ytF+PWFS2eenTMQ4+Ot/w0Fyseri17nnqoY/daQuEx0eGkEiRa12otOLBdxoaW6HDEZrzNbk+Io6If6aeavBNqIqb0=
+    file_glob: true
+    file: $TRAVIS_BUILD_DIR/dist/*    
+    skip_cleanup: true
+    on:
+      repo: ReconfigureIO/reco
+      tags: true
