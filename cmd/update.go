@@ -42,9 +42,6 @@ func updateHandler(cmd *cobra.Command, args []string) {
 		return
 	}
 	logger.Std.Println("You are using reco ", BuildInfo.Version)
-	if BuildInfo.BuildTime != "" {
-		logger.Std.Println("Built at: ", BuildInfo.BuildTime)
-	}
 	latest, err := latestRelease(github.NewClient(nil))
 	if err != nil {
 		logger.Std.Println("Could not retrieve latest verion info from Github: ", err)
