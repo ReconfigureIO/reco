@@ -20,14 +20,19 @@ const (
 )
 
 // updateCmd represents the update command
-var updateCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update reco to the latest version",
-	Run:   updateHandler,
-}
+var (
+	updateCmd = &cobra.Command{
+		Use:   "update",
+		Short: "Update reco to the latest version",
+		Run:   updateHandler,
+	}
+
+	justDoIt bool
+)
 
 func init() {
 	RootCmd.AddCommand(updateCmd)
+	updateCmd.PersistentFlags().BoolVar(&justDoIt, "just-do-it", justDoIt, "Download and apply update without user interaction")
 }
 
 func updateHandler(cmd *cobra.Command, args []string) {
@@ -48,12 +53,20 @@ func updateHandler(cmd *cobra.Command, args []string) {
 		logger.Std.Println("The latest release is reco ", latest)
 	}
 
+	if justDoIt {
+		err = UpgradeTo(latest, BuildInfo.Target)
+		if err != nil {
+			exitWithError(err)
+		} else {
+			return
+		}
+	}
+
 	if latest != BuildInfo.Version {
 		logger.Std.Println("Would you like to upgrade? (Y/N)")
 		upgrade := askForConfirmation()
 		if upgrade == true {
 			if err := UpgradeTo(latest, BuildInfo.Target); err != nil {
-				logger.Std.Println("oh dear")
 				exitWithError(err)
 			}
 		}
