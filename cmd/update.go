@@ -1,27 +1,36 @@
 package cmd
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/go-update"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/google/go-github/github"
+)
+
+const (
+	recoDownloadAddress = "https://s3.amazonaws.com/reconfigure.io/reco/releases/"
 )
 
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update reco to the latest version",
-	Run:   update,
+	Run:   updateHandler,
 }
 
 func init() {
 	RootCmd.AddCommand(updateCmd)
 }
 
-func update(cmd *cobra.Command, args []string) {
+func updateHandler(cmd *cobra.Command, args []string) {
 	if BuildInfo.Version == "" {
 		logger.Std.Println("reco version: untracked dev build")
 		logger.Std.Println("Cannot automatically update from this version")
@@ -43,7 +52,8 @@ func update(cmd *cobra.Command, args []string) {
 		logger.Std.Println("Would you like to upgrade? (Y/N)")
 		upgrade := askForConfirmation()
 		if upgrade == true {
-			if err := tool.Upgrade(latest, BuildInfo.Target); err != nil {
+			if err := UpgradeTo(latest, BuildInfo.Target); err != nil {
+				logger.Std.Println("oh dear")
 				exitWithError(err)
 			}
 		}
@@ -95,4 +105,29 @@ func posString(slice []string, element string) int {
 // containsString returns true iff slice contains element
 func containsString(slice []string, element string) bool {
 	return !(posString(slice, element) == -1)
+}
+
+func UpgradeTo(version string, platform string) error {
+	downloadURL := recoDownloadAddress + "reco-" + version + "-" + platform + ".zip"
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	zipFile, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	unzip, err := zip.NewReader(bytes.NewReader(zipFile), int64(len(zipFile)))
+	if err != nil {
+		return err
+	}
+	newReco, err := unzip.File[0].Open()
+	err = update.Apply(newReco, update.Options{})
+	if err != nil {
+		logger.Std.Println("Error occured during self-update")
+		return err
+	}
+	logger.Std.Println("Self-update successful")
+	return err
 }

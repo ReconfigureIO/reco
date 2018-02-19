@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ReconfigureIO/go-update"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/spf13/viper"
 )
@@ -31,7 +30,6 @@ const (
 
 	platformServerKey     = "PLATFORM_SERVER"
 	platformServerAddress = "https://api.reconfigure.io"
-	recoDownloadAddress   = "https://s3.amazonaws.com/reconfigure.io/reco/releases/"
 	platformAuthFile      = "auth.json"
 	platformProjectFile   = "project.json"
 	StatusWaiting         = "WAITING"
@@ -75,7 +73,6 @@ type Client interface {
 	Project() ProjectConfig
 	// Graph handles graph actions.
 	Graph() Graph
-	Upgrade(string, string) error
 }
 
 var _ Client = &clientImpl{}
@@ -560,22 +557,4 @@ func inSlice(slice []string, val string) bool {
 		}
 	}
 	return false
-}
-
-func (p *clientImpl) Upgrade(version string, platform string) error {
-	//form URL from download endpoint and version string
-	//download zip
-	//hand off to go-update
-
-	downloadURL := recoDownloadAddress + "reco-" + version + "-" + platform + ".zip"
-	resp, err := http.Get(downloadURL)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	err = update.Apply(resp.Body, update.Options{})
-	if err != nil {
-		// error handling
-	}
-	return err
 }
