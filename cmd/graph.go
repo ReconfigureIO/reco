@@ -53,7 +53,7 @@ func init() {
 }
 
 func generateGraph(cmd *cobra.Command, args []string) {
-	if !validBuildDir(srcDir) {
+	if !validGraphDir(srcDir) {
 		exitWithError(errInvalidSourceDirectory)
 	}
 	id, err := tool.Graph().Generate(reco.Args{srcDir})
@@ -88,4 +88,12 @@ func openGraph(_ *cobra.Command, args []string) {
 		logger.Std.Printf("Your graph is available here: %s", file)
 		return
 	}
+}
+
+func validGraphDir(srcDir string) bool {
+	// Do we have a main.go to graph?
+	if !hasMain(srcDir) {
+		return false
+	}
+	return true
 }
