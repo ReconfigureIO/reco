@@ -41,6 +41,8 @@ This attempts to use your default pdf viewer to open the graph.
 	Run: openGraph,
 }
 
+var errInvalidGraphSourceDirectory = errors.New("Invalid source directory. Directory must have a main.go file")
+
 func init() {
 	graphCmd.AddCommand(
 		graphCmdGenerate,
@@ -54,7 +56,7 @@ func init() {
 
 func generateGraph(cmd *cobra.Command, args []string) {
 	if !validGraphDir(srcDir) {
-		exitWithError(errInvalidSourceDirectory)
+		exitWithError(errInvalidGraphSourceDirectory)
 	}
 	id, err := tool.Graph().Generate(reco.Args{srcDir})
 	if err != nil {
