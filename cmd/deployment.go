@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -16,6 +17,8 @@ var (
 	}{
 		wait: "true",
 	}
+
+	errorDeploymentNotFound = errors.New("No deployment with that ID could be found")
 
 	deploymentCmdStart = &cobra.Command{
 		Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
@@ -64,7 +67,7 @@ your command. The two forms are equivalent:
 		Run: func(cmd *cobra.Command, args []string) {
 			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
 			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
-				exitWithError(err)
+				exitWithError(interpretError(err))
 			}
 		},
 	}
@@ -84,7 +87,8 @@ your command. The two forms are equivalent:
 		Run: func(cmd *cobra.Command, args []string) {
 			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
 			if err := l.(reco.Job).Stop(args[0]); err != nil {
-				exitWithError(err)
+
+				exitWithError(interpretError(err))
 			}
 			logger.Std.Printf("deployment stopped successfully")
 		},
@@ -125,7 +129,7 @@ func startDeployment(cmd *cobra.Command, args []string) {
 	}
 	out, err := tool.Deployment().Start(reco.Args{image, command, commandArgs, deploymentVars.wait})
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretError(err))
 	}
 	logger.Std.Println(out)
 }
@@ -135,6 +139,15 @@ func connectDeployment(cmd *cobra.Command, args []string) {
 		exitWithError("deployment ID required")
 	}
 	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0], true); err != nil {
-		exitWithError(err)
+		exitWithError(interpretError(err))
+	}
+}
+
+func interpretError(err error) error {
+	switch err {
+	case reco.ErrNotFound:
+		return errorDeploymentNotFound
+	default:
+		return err
 	}
 }

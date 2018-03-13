@@ -139,7 +139,7 @@ func (p *clientRequest) Do(method string, body interface{}) (*http.Response, err
 		case 401, 403:
 			err = errAuthFailed
 		case 404:
-			err = errNotFound
+			err = ErrNotFound
 		}
 	} else if err != nil {
 		err = errNetworkError
