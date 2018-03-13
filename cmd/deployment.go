@@ -87,7 +87,6 @@ your command. The two forms are equivalent:
 		Run: func(cmd *cobra.Command, args []string) {
 			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
 			if err := l.(reco.Job).Stop(args[0]); err != nil {
-
 				exitWithError(interpretError(err))
 			}
 			logger.Std.Printf("deployment stopped successfully")
