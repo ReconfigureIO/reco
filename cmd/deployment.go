@@ -18,7 +18,7 @@ var (
 		wait: "true",
 	}
 
-	errorDeploymentNotFound = errors.New("No deployment with that ID could be found")
+	errorDeploymentNotFound = errors.New("No deployment with that ID could be found. Run 'reco deploy list' to view available deployments")
 
 	deploymentCmdStart = &cobra.Command{
 		Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
