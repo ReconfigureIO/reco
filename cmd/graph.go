@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"os/exec"
 	"runtime"
 
@@ -8,6 +9,8 @@ import (
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
 )
+
+var errorGraphNotFound = errors.New("No graph with that ID could be found. Run 'reco graph list' to view available graphs")
 
 var graphCmd = &cobra.Command{
 	Use:     "graph",
@@ -58,7 +61,7 @@ func generateGraph(cmd *cobra.Command, args []string) {
 	}
 	id, err := tool.Graph().Generate(reco.Args{srcDir})
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorGraph(err))
 	}
 	logger.Std.Println(id)
 }
@@ -69,7 +72,7 @@ func openGraph(_ *cobra.Command, args []string) {
 	}
 	file, err := tool.Graph().Open(args[0])
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorGraph(err))
 	}
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
@@ -87,5 +90,14 @@ func openGraph(_ *cobra.Command, args []string) {
 	if cmd == nil || cmd.Run() != nil {
 		logger.Std.Printf("Your graph is available here: %s", file)
 		return
+	}
+}
+
+func interpretErrorGraph(err error) error {
+	switch err {
+	case reco.ErrNotFound:
+		return errorGraphNotFound
+	default:
+		return err
 	}
 }
