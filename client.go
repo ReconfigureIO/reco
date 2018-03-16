@@ -51,7 +51,7 @@ var (
 	errProjectNotCreated      = errors.New("No projects found. Run 'reco project create' to create one")
 	errProjectNotFound        = errors.New("Project not found. Run 'reco project list' to view all your available projects")
 	errNetworkError           = errors.New("Network error")
-	errNotFound               = errors.New("Not found")
+	ErrNotFound               = errors.New("Not found")
 	errInvalidToken           = errors.New("The token is invalid")
 	errUnknownError           = errors.New("Unknown error occurred")
 	errBadResponse            = errors.New("Bad response from server")

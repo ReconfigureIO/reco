@@ -120,7 +120,7 @@ func (p deploymentJob) List(filter M) (printer.Table, error) {
 	}
 
 	table = printer.Table{
-		Header: []string{"id", "image", "command", "status", "started", "duration"},
+		Header: []string{"deployment id", "build id", "command", "status", "started", "duration"},
 		Body:   body,
 	}
 	if allProjects {
