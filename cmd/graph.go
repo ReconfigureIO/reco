@@ -63,7 +63,8 @@ func generateGraph(cmd *cobra.Command, args []string) {
 	if err != nil {
 		exitWithError(err)
 	}
-	logger.Std.Println(id)
+	logger.Std.Println("Graph submitted. Run 'reco graph list' to track the status of your graph")
+	logger.Std.Println("Once the graph has been completed run 'reco graph open " + id + "' to view it")
 }
 
 func openGraph(_ *cobra.Command, args []string) {
