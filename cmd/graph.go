@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"os/exec"
 	"runtime"
 
@@ -41,6 +42,8 @@ This attempts to use your default pdf viewer to open the graph.
 	Run: openGraph,
 }
 
+var errInvalidGraphSourceDirectory = errors.New("Invalid source directory. Directory must have a main.go file")
+
 func init() {
 	graphCmd.AddCommand(
 		graphCmdGenerate,
@@ -53,8 +56,8 @@ func init() {
 }
 
 func generateGraph(cmd *cobra.Command, args []string) {
-	if !validBuildDir(srcDir) {
-		exitWithError(errInvalidSourceDirectory)
+	if !validGraphDir(srcDir) {
+		exitWithError(errInvalidGraphSourceDirectory)
 	}
 	id, err := tool.Graph().Generate(reco.Args{srcDir})
 	if err != nil {
@@ -89,4 +92,12 @@ func openGraph(_ *cobra.Command, args []string) {
 		logger.Std.Printf("Your graph is available here: %s", file)
 		return
 	}
+}
+
+func validGraphDir(srcDir string) bool {
+	// Do we have a main.go to graph?
+	if !hasMain(srcDir) {
+		return false
+	}
+	return true
 }
