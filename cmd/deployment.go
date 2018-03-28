@@ -1,22 +1,30 @@
 package cmd
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"reflect"
+
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
 )
 
-var deploymentVars = struct {
-	wait string
-}{
-	wait: "true",
-}
+var (
+	deploymentVars = struct {
+		wait string
+	}{
+		wait: "true",
+	}
 
-var deploymentCmdStart = &cobra.Command{
-	Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
-	Aliases: []string{"r", "start", "starts"},
-	Short:   "Deploy a build image and command to an F1 instance",
-	Long: `Deploy a build image and run a command from that build on an F1 instance.
+	errorDeploymentNotFound = errors.New("No deployment with that ID could be found. Run 'reco deploy list' to view available deployments")
+
+	deploymentCmdStart = &cobra.Command{
+		Use:     "run [flags] <build_ID> <your_cmd> -- [args]",
+		Aliases: []string{"r", "start", "starts"},
+		Short:   "Deploy a build image and command to an F1 instance",
+		Long: `Deploy a build image and run a command from that build on an F1 instance.
 
 More about commands:
 
@@ -38,25 +46,67 @@ of your arguments may conflict with this command. If this is the case,
 use "--" to specify that all further arguments should be provided to
 your command. The two forms are equivalent:
 "reco run my-image my-cmd -- 1" and "reco run my-image my-cmd 1"
-`,
-	Run: startDeployment,
-}
+	`,
+		Run: startDeployment,
+	}
 
-var deploymentCmdConnect = &cobra.Command{
-	Use:     "connect <deploy_ID>",
-	Aliases: []string{"c", "connects"},
-	Short:   "Connect to a running deployment",
-	Long:    "Connect to a running deployment.",
-	Run:     connectDeployment,
-}
+	deploymentCmdConnect = &cobra.Command{
+		Use:     "connect <deploy_ID>",
+		Aliases: []string{"c", "connects"},
+		Short:   "Connect to a running deployment",
+		Long:    "Connect to a running deployment.",
+		Run:     connectDeployment,
+	}
+
+	deploymentCmdLog = &cobra.Command{
+		Use:     fmt.Sprintf("log [deployment_ID]"),
+		Aliases: []string{"logs"},
+		Short:   fmt.Sprintf("Stream logs for a deployment"),
+		Long:    fmt.Sprintf("Stream logs for a deployment previously started with 'reco deploy run'."),
+		PreRun:  deploymentLogPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
+				exitWithError(interpretErrorDeployment(err))
+			}
+		},
+	}
+
+	deploymentLogPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
+
+	deploymentCmdStop = &cobra.Command{
+		Use:     "stop [deployment_ID]",
+		Aliases: []string{"s", "stp", "stops"},
+		Short:   fmt.Sprintf("Stop a deployment"),
+		Long:    fmt.Sprintf("Stop a deployment previously started with 'reco deploy run'"),
+		PreRun:  deploymentStopPreRun,
+		Run: func(cmd *cobra.Command, args []string) {
+			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
+			if err := l.(reco.Job).Stop(args[0]); err != nil {
+				exitWithError(interpretErrorDeployment(err))
+			}
+			logger.Std.Printf("deployment stopped successfully")
+		},
+	}
+
+	deploymentStopPreRun = func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			exitWithError("ID required")
+		}
+	}
+)
 
 func init() {
 	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "Wait for the run to complete. If false, it only starts the command without waiting for it to complete")
 
 	deploymentCmd := genDevCommand("deploy", "deployment", "d", "dep", "deps", "deployments", "deployment")
 	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
-	deploymentCmd.AddCommand(genLogSubcommand("deploy", "deployment"))
-	deploymentCmd.AddCommand(genStopSubcommand("deployment", "Deployment"))
+	deploymentCmd.AddCommand(deploymentCmdLog)
+	deploymentCmd.AddCommand(deploymentCmdStop)
 	deploymentCmd.AddCommand(deploymentCmdStart)
 	deploymentCmd.AddCommand(deploymentCmdConnect)
 	deploymentCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
@@ -78,7 +128,7 @@ func startDeployment(cmd *cobra.Command, args []string) {
 	}
 	out, err := tool.Deployment().Start(reco.Args{image, command, commandArgs, deploymentVars.wait})
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorDeployment(err))
 	}
 	logger.Std.Println(out)
 }
@@ -88,6 +138,15 @@ func connectDeployment(cmd *cobra.Command, args []string) {
 		exitWithError("deployment ID required")
 	}
 	if err := tool.Deployment().(reco.DeploymentProxy).Connect(args[0], true); err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorDeployment(err))
+	}
+}
+
+func interpretErrorDeployment(err error) error {
+	switch err {
+	case reco.ErrNotFound:
+		return errorDeploymentNotFound
+	default:
+		return err
 	}
 }

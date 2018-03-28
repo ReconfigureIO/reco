@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"os/exec"
 	"runtime"
 
@@ -8,6 +9,8 @@ import (
 	"github.com/ReconfigureIO/reco"
 	"github.com/ReconfigureIO/reco/logger"
 )
+
+var errorGraphNotFound = errors.New("No graph with that ID could be found. Run 'reco graph list' to view available graphs")
 
 var graphCmd = &cobra.Command{
 	Use:     "graph",
@@ -41,6 +44,8 @@ This attempts to use your default pdf viewer to open the graph.
 	Run: openGraph,
 }
 
+var errInvalidGraphSourceDirectory = errors.New("Invalid source directory. Directory must have a main.go file")
+
 func init() {
 	graphCmd.AddCommand(
 		graphCmdGenerate,
@@ -53,14 +58,15 @@ func init() {
 }
 
 func generateGraph(cmd *cobra.Command, args []string) {
-	if !validBuildDir(srcDir) {
-		exitWithError(errInvalidSourceDirectory)
+	if !validGraphDir(srcDir) {
+		exitWithError(errInvalidGraphSourceDirectory)
 	}
 	id, err := tool.Graph().Generate(reco.Args{srcDir})
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorGraph(err))
 	}
-	logger.Std.Println(id)
+	logger.Std.Println("Graph submitted. Run 'reco graph list' to track the status of your graph")
+	logger.Std.Println("Once the graph has been completed run 'reco graph open " + id + "' to view it")
 }
 
 func openGraph(_ *cobra.Command, args []string) {
@@ -69,7 +75,7 @@ func openGraph(_ *cobra.Command, args []string) {
 	}
 	file, err := tool.Graph().Open(args[0])
 	if err != nil {
-		exitWithError(err)
+		exitWithError(interpretErrorGraph(err))
 	}
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
@@ -88,4 +94,21 @@ func openGraph(_ *cobra.Command, args []string) {
 		logger.Std.Printf("Your graph is available here: %s", file)
 		return
 	}
+}
+
+func interpretErrorGraph(err error) error {
+	switch err {
+	case reco.ErrNotFound:
+		return errorGraphNotFound
+	default:
+		return err
+	}
+}
+
+func validGraphDir(srcDir string) bool {
+	// Do we have a main.go to graph?
+	if !hasMain(srcDir) {
+		return false
+	}
+	return true
 }
