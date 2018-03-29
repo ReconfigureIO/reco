@@ -12,11 +12,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco/downloader"
 	"github.com/ReconfigureIO/reco/logger"
 	"github.com/abiosoft/goutils/env"
 	"github.com/reconfigureio/archiver"
-	"github.com/ReconfigureIO/cobra"
 )
 
 var dependencies = map[string]dep{
@@ -67,8 +67,13 @@ func check(_ *cobra.Command, args []string) {
 		exitWithError(fmt.Errorf("%s not found", srcFile))
 	}
 
+	//reco-check expects absolute paths so convert relative to absolute here
+	absSrcFile, err := filepath.Abs(srcFile)
+	if err != nil {
+		exitWithError(err)
+	}
 	var out bytes.Buffer
-	cmd := exec.Command(filepath.Join(dep.Dir(), "bin", "reco-check"), srcFile)
+	cmd := exec.Command(filepath.Join(dep.Dir(), "bin", "reco-check"), absSrcFile)
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 
@@ -84,7 +89,7 @@ func check(_ *cobra.Command, args []string) {
 	cmd.Env = envs
 
 	if cmd.Run() != nil {
-		exitWithError(fmt.Errorf("error(s) found while checking %s\n\n%s", srcFile, out.String()))
+		exitWithError(fmt.Errorf("error(s) found while checking %s\n\n%s", absSrcFile, out.String()))
 	} else {
 		fmt.Println(srcFile, "checked successfully")
 	}
@@ -266,6 +271,10 @@ func (r recocheckDep) VendorDir() string {
 
 func (r recocheckDep) makeVirtualGoPath() error {
 	os.MkdirAll(r.VendorDir(), 0755)
+	srcDir, err := filepath.Abs(srcDir)
+	if err != nil {
+		exitWithError(err)
+	}
 	vendorDir := filepath.Join(srcDir, "vendor")
 	stat, err := os.Stat(vendorDir)
 
