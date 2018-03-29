@@ -69,7 +69,6 @@ func check(_ *cobra.Command, args []string) {
 
 	//reco-check expects absolute paths so convert relative to absolute here
 	absSrcFile, err := filepath.Abs(srcFile)
-	fmt.Println(absSrcFile)
 	if err != nil {
 		exitWithError(err)
 	}
