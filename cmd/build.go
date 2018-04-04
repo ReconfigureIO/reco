@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
@@ -97,7 +98,8 @@ func startBuild(cmd *cobra.Command, args []string) {
 		exitWithError(err)
 	}
 
-	logger.Std.Println(id)
+	status := tool.Build().Status(id)
+	logger.Std.Println("Build ID: " + id + " Status: " + strings.Title(status))
 }
 
 func validBuildDir(srcDir string) bool {

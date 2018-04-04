@@ -16,6 +16,8 @@ type Job interface {
 	Start(Args) (output string, err error)
 	// Stop stops the job.
 	Stop(id string) error
+	// Status returns the status of the job.
+	Status(id string) string
 	// List lists job resources.
 	List(filter M) (printer.Table, error)
 	// Log logs the job.

@@ -68,6 +68,10 @@ func (b buildJob) Start(args Args) (string, error) {
 	return id, nil
 }
 
+func (b buildJob) Status(id string) string {
+	return b.clientImpl.getStatus("build", id)
+}
+
 func (b buildJob) Stop(id string) error {
 	return b.clientImpl.stopJob("build", id)
 }

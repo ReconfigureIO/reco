@@ -77,6 +77,10 @@ func (p deploymentJob) Start(args Args) (string, error) {
 	return "", nil
 }
 
+func (p deploymentJob) Status(id string) string {
+	return p.clientImpl.getStatus("deployment", id)
+}
+
 func (p deploymentJob) Stop(id string) error {
 	resp, err := p.clientImpl.getJob("deployment", id)
 	if err != nil {

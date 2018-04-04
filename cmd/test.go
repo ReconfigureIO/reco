@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strings"
 
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
@@ -89,9 +90,11 @@ func startTest(cmd *cobra.Command, args []string) {
 	} else if len(args) > 1 {
 		commandArgs = args[1:]
 	}
-	out, err := tool.Test().Start(reco.Args{srcDir, command, commandArgs})
+	id, err := tool.Test().Start(reco.Args{srcDir, command, commandArgs})
 	if err != nil {
 		exitWithError(err)
 	}
-	logger.Std.Println(out)
+
+	status := tool.Test().Status(id)
+	logger.Std.Println("Simulation ID: " + id + " Status: " + strings.Title(status))
 }
