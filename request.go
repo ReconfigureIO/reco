@@ -63,6 +63,15 @@ var (
 	}
 )
 
+func init() {
+	var PTransport http.RoundTripper = &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+	}
+	if PTransport != nil {
+		httpClient.Transport = PTransport
+	}
+}
+
 // endpoint string, params urlParams, body io.Reader
 type clientRequest struct {
 	endpoint           string
@@ -133,6 +142,7 @@ func (p *clientRequest) Do(method string, body interface{}) (*http.Response, err
 		}
 	}
 	req.SetBasicAuth(p.username, p.password)
+
 	resp, err := httpClient.Do(req)
 	if resp != nil {
 		switch resp.StatusCode {
