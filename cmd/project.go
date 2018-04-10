@@ -53,7 +53,7 @@ This is a directory level configuration so you need to check in each new locatio
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
 		Short:   "List all projects for your account",
-		Long:    `List all projects for your account.
+		Long: `List all projects for your account.
 If you have an active project set for your current location this will be highlighted in the list.`,
 		Run:     listProject,
 		PostRun: listPostRun,

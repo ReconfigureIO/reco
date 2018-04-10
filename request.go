@@ -2,6 +2,7 @@ package reco
 
 import (
 	"context"
+	"github.com/mattn/go-ieproxy"
 	"io"
 	"net/http"
 	"net/url"
@@ -64,12 +65,8 @@ var (
 )
 
 func init() {
-	var PTransport http.RoundTripper = &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-	}
-	if PTransport != nil {
-		httpClient.Transport = PTransport
-	}
+	ieproxy.OverrideEnvWithStaticProxy()
+	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment
 }
 
 // endpoint string, params urlParams, body io.Reader
