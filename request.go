@@ -2,6 +2,7 @@ package reco
 
 import (
 	"context"
+	"github.com/mattn/go-ieproxy"
 	"io"
 	"net/http"
 	"net/url"
@@ -62,6 +63,11 @@ var (
 		Timeout: 0,
 	}
 )
+
+func init() {
+	ieproxy.OverrideEnvWithStaticProxy()
+	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment
+}
 
 // endpoint string, params urlParams, body io.Reader
 type clientRequest struct {
@@ -133,6 +139,7 @@ func (p *clientRequest) Do(method string, body interface{}) (*http.Response, err
 		}
 	}
 	req.SetBasicAuth(p.username, p.password)
+
 	resp, err := httpClient.Do(req)
 	if resp != nil {
 		switch resp.StatusCode {
