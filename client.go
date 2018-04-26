@@ -218,7 +218,7 @@ func (p *clientImpl) Auth(token string) error {
 	req := p.apiRequest(endpoints.users.String())
 	_, err := req.Do("GET", nil)
 	if err != nil {
-		return errAuthFailedInvalidToken
+		return err
 	} else {
 		err = p.saveAuth()
 		if err != nil {
