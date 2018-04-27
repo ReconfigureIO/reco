@@ -16,3 +16,4 @@ import:
 - package: github.com/skratchdot/open-golang
   subpackages:
   - open
+- package: github.com/mattn/go-ieproxy

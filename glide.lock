@@ -1,5 +1,5 @@
-hash: 3f8fd0f68a47d3a138a529584f903f6f425c73ba70d2cd2a9483393d489a6d0d
-updated: 2018-02-16T11:58:06.879757929Z
+hash: a20612b08799d1177effb62a4e0af1b2ec50c9e73a30cad3fea1652d256a5518
+updated: 2018-04-09T17:54:03.738046+01:00
 imports:
 - name: github.com/abiosoft/goutils
   version: af27f2043be5f6bf2388ddb35cc93a70b9037365
@@ -43,6 +43,8 @@ imports:
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/magiconair/properties
   version: 49d762b9817ba1c2e9d0c69183c2b4a8b8f1d934
+- name: github.com/mattn/go-ieproxy
+  version: 701d8548fa471fbba009183fadc7b6323cd0b8e4
 - name: github.com/mattn/go-runewidth
   version: 97311d9f7767e3d6f422ea06661bc2c7a19e8a5d
 - name: github.com/mitchellh/ioprogress

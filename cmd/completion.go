@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ReconfigureIO/reco/logger"
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco/logger"
 )
 
 // completionCmd represents the completion command
