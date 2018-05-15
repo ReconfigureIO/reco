@@ -110,6 +110,10 @@ func (b testJob) List(filter M) (printer.Table, error) {
 	return table, nil
 }
 
+func (t testJob) Status(id string) string {
+	return t.clientImpl.getStatus("simulation", id)
+}
+
 func (t testJob) Stop(id string) error {
 	return t.clientImpl.stopJob("simulation", id)
 }
