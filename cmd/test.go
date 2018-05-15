@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"reflect"
 	"strings"
 
 	"github.com/ReconfigureIO/cobra"
@@ -30,8 +29,7 @@ var (
 		Long:    fmt.Sprintf("Stream logs for a simulation previously started with 'reco sim run'."),
 		PreRun:  testLogPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Test").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
+			if err := tool.Test().Log(args[0], os.Stdout); err != nil {
 				exitWithError(err)
 			}
 		},
@@ -50,8 +48,7 @@ var (
 		Long:    fmt.Sprintf("Stop a simulation previously started with 'reco sim run'"),
 		PreRun:  testStopPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Test").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Stop(args[0]); err != nil {
+			if err := tool.Test().Stop(args[0]); err != nil {
 				exitWithError(err)
 			}
 			logger.Std.Printf("Simulation stopped successfully")
@@ -67,7 +64,7 @@ var (
 
 func init() {
 	testCmd := genDevCommand("sim", "simulation", "simulation", "simulations", "test", "tests", "t")
-	testCmd.AddCommand(genListSubcommand("simulations", "Test"))
+	testCmd.AddCommand(genListSubcommand("simulations", tool.Test()))
 	testCmd.AddCommand(testCmdLog)
 	testCmd.AddCommand(testCmdStop)
 	testCmd.AddCommand(testCmdStart)

@@ -14,7 +14,7 @@ var cfgFile string
 var provider string
 var project string
 var srcDir string
-var tool reco.Client
+var tool reco.Client = reco.NewClient()
 
 var errInvalidSourceDirectory = errors.New("invalid source directory. Directory and all cmd/<directory> subdirectories must have a main.go file")
 
@@ -85,7 +85,6 @@ func initConfig() {
 
 func initTool() {
 	viper.Set("project", project)
-	tool = reco.NewClient()
 	if err := tool.Init(); err != nil {
 		exitWithError(err)
 	}

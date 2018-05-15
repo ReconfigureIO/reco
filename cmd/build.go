@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/ReconfigureIO/cobra"
@@ -39,8 +38,7 @@ var (
 		Long:    fmt.Sprintf("Stream logs for a build previously started with 'reco build run'."),
 		PreRun:  buildLogPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Build").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
+			if err := tool.Build().Log(args[0], os.Stdout); err != nil {
 				exitWithError(err)
 			}
 		},
@@ -59,8 +57,7 @@ var (
 		Long:    fmt.Sprintf("Stop a build previously started with 'reco build run'"),
 		PreRun:  buildStopPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Build").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Stop(args[0]); err != nil {
+			if err := tool.Build().Stop(args[0]); err != nil {
 				exitWithError(err)
 			}
 			logger.Std.Printf("build stopped successfully")
@@ -79,7 +76,7 @@ func init() {
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation")
 
 	buildCmd := genDevCommand("build", "build", "b", "builds")
-	buildCmd.AddCommand(genListSubcommand("builds", "Build"))
+	buildCmd.AddCommand(genListSubcommand("builds", tool.Build()))
 	buildCmd.AddCommand(buildCmdLog)
 	buildCmd.AddCommand(buildCmdStop)
 	buildCmd.AddCommand(buildCmdStart)
