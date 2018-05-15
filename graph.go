@@ -23,7 +23,7 @@ type Graph interface {
 var _ Graph = &platformGraph{}
 
 type platformGraph struct {
-	clientImpl
+	*clientImpl
 }
 
 func (b platformGraph) prepareGraph() (string, error) {

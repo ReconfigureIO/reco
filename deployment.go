@@ -24,7 +24,7 @@ var _ Job = deploymentJob{}
 var _ DeploymentProxy = deploymentJob{}
 
 type deploymentJob struct {
-	clientImpl
+	*clientImpl
 }
 
 func (p deploymentJob) Start(args Args) (string, error) {

@@ -12,7 +12,7 @@ import (
 var _ Job = &buildJob{}
 
 type buildJob struct {
-	clientImpl
+	*clientImpl
 }
 
 func (b buildJob) prepareBuild() (string, error) {
