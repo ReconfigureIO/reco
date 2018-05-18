@@ -13,7 +13,7 @@ import (
 var _ Job = &testJob{}
 
 type testJob struct {
-	clientImpl
+	*clientImpl
 }
 
 func (t testJob) prepareTest(command string) (string, error) {

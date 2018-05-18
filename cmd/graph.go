@@ -50,7 +50,7 @@ func init() {
 	graphCmd.AddCommand(
 		graphCmdGenerate,
 		graphCmdOpen,
-		genListSubcommand("graphs", "Graph"),
+		genListSubcommand("graphs", tool.Graph()),
 	)
 	graphCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 

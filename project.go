@@ -35,7 +35,7 @@ type ProjectInfo struct {
 }
 
 type platformProject struct {
-	p clientImpl
+	p *clientImpl
 }
 
 func (p platformProject) List(filter M) (printer.Table, error) {

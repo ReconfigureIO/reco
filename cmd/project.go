@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"reflect"
 	"strconv"
 
 	"github.com/ReconfigureIO/cobra"
@@ -113,7 +112,6 @@ func listProject(cmd *cobra.Command, args []string) {
 	}
 
 	listVars.resourceType = "project"
-	l := reflect.ValueOf(tool).MethodByName("Project").Call(nil)[0].Interface()
-	listVars.table, listVars.err = l.(lister).List(filters)
+	listVars.table, listVars.err = tool.Project().List(filters)
 	listCmdAddFlags(cmd)
 }

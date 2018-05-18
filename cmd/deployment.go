@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
 
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/reco"
@@ -65,8 +64,7 @@ your command. The two forms are equivalent:
 		Long:    fmt.Sprintf("Stream logs for a deployment previously started with 'reco deploy run'."),
 		PreRun:  deploymentLogPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Log(args[0], os.Stdout); err != nil {
+			if err := tool.Deployment().Log(args[0], os.Stdout); err != nil {
 				exitWithError(interpretErrorDeployment(err))
 			}
 		},
@@ -85,8 +83,7 @@ your command. The two forms are equivalent:
 		Long:    fmt.Sprintf("Stop a deployment previously started with 'reco deploy run'"),
 		PreRun:  deploymentStopPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
-			l := reflect.ValueOf(tool).MethodByName("Deployment").Call(nil)[0].Interface()
-			if err := l.(reco.Job).Stop(args[0]); err != nil {
+			if err := tool.Deployment().Stop(args[0]); err != nil {
 				exitWithError(interpretErrorDeployment(err))
 			}
 			logger.Std.Printf("deployment stopped successfully")
@@ -104,7 +101,7 @@ func init() {
 	deploymentCmdStart.PersistentFlags().StringVarP(&deploymentVars.wait, "wait", "w", deploymentVars.wait, "Wait for the run to complete. If false, it only starts the command without waiting for it to complete")
 
 	deploymentCmd := genDevCommand("deploy", "deployment", "d", "dep", "deps", "deployments", "deployment")
-	deploymentCmd.AddCommand(genListSubcommand("deployments", "Deployment"))
+	deploymentCmd.AddCommand(genListSubcommand("deployments", tool.Deployment()))
 	deploymentCmd.AddCommand(deploymentCmdLog)
 	deploymentCmd.AddCommand(deploymentCmdStop)
 	deploymentCmd.AddCommand(deploymentCmdStart)

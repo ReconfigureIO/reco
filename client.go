@@ -84,26 +84,35 @@ type clientImpl struct {
 	Username       string `json:"user_id,omitempty"`
 	Token          string `json:"token,omitempty"`
 	ProjectID      string `json:"project,omitempty"`
+
+	noCopy
 }
+
+// Make 'go vet' complain when copies of the clientImpl struct are taken.
+// There should be exactly one of them during an invocation of reco.
+// See https://github.com/golang/go/issues/8005#issuecomment-190753527
+type noCopy struct{}
+
+func (*noCopy) Lock() {}
 
 // NewClient creates a new reconfigure.io client.
 func NewClient() Client {
 	return &clientImpl{}
 }
 
-func (p clientImpl) Build() Job {
+func (p *clientImpl) Build() Job {
 	return &buildJob{p}
 }
-func (p clientImpl) Test() Job {
+func (p *clientImpl) Test() Job {
 	return &testJob{p}
 }
-func (p clientImpl) Deployment() Job {
+func (p *clientImpl) Deployment() Job {
 	return &deploymentJob{p}
 }
-func (p clientImpl) Project() ProjectConfig {
+func (p *clientImpl) Project() ProjectConfig {
 	return &platformProject{p}
 }
-func (p clientImpl) Graph() Graph {
+func (p *clientImpl) Graph() Graph {
 	return &platformGraph{p}
 }
 
@@ -119,15 +128,15 @@ func (p *clientImpl) initProject() {
 	}
 }
 
-func (p clientImpl) authFileName() string {
+func (p *clientImpl) authFileName() string {
 	return filepath.Join(viper.GetString(GlobalConfigDirKey), platformAuthFile)
 }
 
-func (p clientImpl) projectFileName() string {
+func (p *clientImpl) projectFileName() string {
 	return filepath.Join(viper.GetString(ConfigDirKey), platformProjectFile)
 }
 
-func (p clientImpl) saveAuth() error {
+func (p *clientImpl) saveAuth() error {
 	var prj clientImpl
 	if p.Username == "" || p.Token == "" {
 		return nil
@@ -139,10 +148,10 @@ func (p clientImpl) saveAuth() error {
 		return err
 	}
 	defer authFile.Close()
-	return json.NewEncoder(authFile).Encode(prj)
+	return json.NewEncoder(authFile).Encode(&prj)
 }
 
-func (p clientImpl) saveProject() error {
+func (p *clientImpl) saveProject() error {
 	var prj clientImpl
 	if p.ProjectID == "" {
 		return nil
@@ -153,7 +162,7 @@ func (p clientImpl) saveProject() error {
 		return err
 	}
 	defer projectFile.Close()
-	return json.NewEncoder(projectFile).Encode(prj)
+	return json.NewEncoder(projectFile).Encode(&prj)
 }
 
 func (p *clientImpl) loadAuth() error {
@@ -251,11 +260,11 @@ func decodeJSON(r io.Reader, body interface{}) error {
 	return nil
 }
 
-func (p clientImpl) logJob(eventType string, id string) error {
+func (p *clientImpl) logJob(eventType string, id string) error {
 	return p.logs(eventType, id)
 }
 
-func (p clientImpl) getStatus(jobType string, id string) string {
+func (p *clientImpl) getStatus(jobType string, id string) string {
 	job, err := p.getJob(jobType, id)
 	if err == nil && job.Status != "" {
 		return job.Status
@@ -263,7 +272,7 @@ func (p clientImpl) getStatus(jobType string, id string) string {
 	return StatusErrored
 }
 
-func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string) error {
+func (p *clientImpl) waitForStatus(jobType string, id string, targetStatus string) error {
 	status := StatusSubmitted
 	prevStatus := ""
 	for status != targetStatus {
@@ -303,7 +312,7 @@ func (p clientImpl) waitForStatus(jobType string, id string, targetStatus string
 	return nil
 }
 
-func (p clientImpl) waitAndLog(jobType string, id string) error {
+func (p *clientImpl) waitAndLog(jobType string, id string) error {
 	err := p.waitForStatus(jobType, id, StatusStarted)
 	if err != nil {
 		return err
@@ -311,12 +320,12 @@ func (p clientImpl) waitAndLog(jobType string, id string) error {
 	return p.logJob(jobType, id)
 }
 
-func (p clientImpl) logs(jobType string, id string) error {
+func (p *clientImpl) logs(jobType string, id string) error {
 	_, err := p.waitForLog(jobType, id, false)
 	return err
 }
 
-func (p clientImpl) getJob(jobType string, id string) (jobInfo, error) {
+func (p *clientImpl) getJob(jobType string, id string) (jobInfo, error) {
 	var apiResp struct {
 		Job jobInfo `json:"value"`
 	}
@@ -342,7 +351,7 @@ func (p clientImpl) getJob(jobType string, id string) (jobInfo, error) {
 // waitForLog attempts to stream logs. If peek is true, it ensures log streaming has started
 // and returns the body for the caller to read remaining contents.
 // Otherwise, logs are streamed to stderr.
-func (p clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, error) {
+func (p *clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, error) {
 	var endpoint string
 	switch jobType {
 	case JobTypeSimulation:
@@ -383,7 +392,7 @@ func (p clientImpl) waitForLog(jobType, id string, peek bool) (io.ReadCloser, er
 	}
 }
 
-func (p clientImpl) uploadJob(jobType string, id string, srcArchive string) error {
+func (p *clientImpl) uploadJob(jobType string, id string, srcArchive string) error {
 	var endpoint string
 	switch jobType {
 	case JobTypeSimulation:
@@ -416,7 +425,7 @@ func (p clientImpl) uploadJob(jobType string, id string, srcArchive string) erro
 	return err
 }
 
-func (p clientImpl) apiRequest(endpoint string) clientRequest {
+func (p *clientImpl) apiRequest(endpoint string) clientRequest {
 	return clientRequest{
 		endpoint: p.platformServer + endpoint,
 		username: p.Username,
@@ -425,7 +434,7 @@ func (p clientImpl) apiRequest(endpoint string) clientRequest {
 	}
 }
 
-func (p clientImpl) projectID() (string, error) {
+func (p *clientImpl) projectID() (string, error) {
 	if p.Username == "" || p.Token == "" {
 		return "", errAuthRequired
 	}
@@ -458,7 +467,7 @@ func (p clientImpl) projectID() (string, error) {
 	return p.ProjectID, nil
 }
 
-func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
+func (p *clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 	limit := filters.Int("limit")
 
 	var endpoint string
@@ -514,23 +523,23 @@ func (p clientImpl) listJobs(jobType string, filters M) ([]jobInfo, error) {
 	return respJSON.Jobs, err
 }
 
-func (p clientImpl) listBuilds(filters M) ([]jobInfo, error) {
+func (p *clientImpl) listBuilds(filters M) ([]jobInfo, error) {
 	return p.listJobs(JobTypeBuild, filters)
 }
 
-func (p clientImpl) listDeployments(filters M) ([]jobInfo, error) {
+func (p *clientImpl) listDeployments(filters M) ([]jobInfo, error) {
 	return p.listJobs(JobTypeDeployment, filters)
 }
 
-func (p clientImpl) listTests(filters M) ([]jobInfo, error) {
+func (p *clientImpl) listTests(filters M) ([]jobInfo, error) {
 	return p.listJobs(JobTypeSimulation, filters)
 }
 
-func (p clientImpl) listGraphs(filters M) ([]jobInfo, error) {
+func (p *clientImpl) listGraphs(filters M) ([]jobInfo, error) {
 	return p.listJobs(JobTypeGraph, filters)
 }
 
-func (p clientImpl) stopJob(eventType string, id string) error {
+func (p *clientImpl) stopJob(eventType string, id string) error {
 	var endpoint string
 	switch eventType {
 	case JobTypeSimulation:

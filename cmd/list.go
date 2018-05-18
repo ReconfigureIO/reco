@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"reflect"
 	"strconv"
 
 	"github.com/ReconfigureIO/cobra"
@@ -24,7 +23,11 @@ var listVars struct {
 	public      bool
 }
 
-func genListSubcommand(name string, job string) *cobra.Command {
+type lister interface {
+	List(filter reco.M) (printer.Table, error)
+}
+
+func genListSubcommand(name string, job lister) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"ls", "lst", "lists"},
@@ -46,8 +49,7 @@ func genListSubcommand(name string, job string) *cobra.Command {
 			}
 
 			listVars.resourceType = name
-			l := reflect.ValueOf(tool).MethodByName(job).Call(nil)[0].Interface()
-			listVars.table, listVars.err = l.(lister).List(filters)
+			listVars.table, listVars.err = job.List(filters)
 		},
 		PostRun: listPostRun,
 	}
@@ -84,8 +86,4 @@ func listCmdAddFlags(listCmd *cobra.Command) {
 	listCmd.PersistentFlags().StringVar(&listVars.status, "status", listVars.status, "Filter result by status: completed, errored, timed-out etc")
 	listCmd.PersistentFlags().BoolVar(&listVars.allProjects, "all-projects", listVars.allProjects, "List items for all projects, not just the active project")
 	listCmd.PersistentFlags().BoolVar(&listVars.public, "public", listVars.public, "Only list publically available items")
-}
-
-type lister interface {
-	List(filter reco.M) (printer.Table, error)
 }
