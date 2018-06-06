@@ -44,7 +44,6 @@ func init() {
 	// hide provider and config. It is for internal use
 	RootCmd.PersistentFlags().MarkHidden("provider")
 	RootCmd.PersistentFlags().MarkHidden("config")
-
 }
 
 // initConfig reads in config file and ENV variables if set.

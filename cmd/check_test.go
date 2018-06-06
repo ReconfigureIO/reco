@@ -33,5 +33,4 @@ func TestMakeVirtualGoPathWorksIfVendor(t *testing.T) {
 	}
 
 	os.RemoveAll(vendorDir)
-
 }

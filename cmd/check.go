@@ -279,7 +279,6 @@ func (r recocheckDep) makeVirtualGoPath() error {
 	stat, err := os.Stat(vendorDir)
 
 	if err != nil {
-
 		if pErr, ok := err.(*os.PathError); ok {
 			switch pErr.Err.Error() {
 			case os.ErrNotExist.Error():
