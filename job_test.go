@@ -61,7 +61,6 @@ func TestIsCompleted(t *testing.T) {
 			t.Error("IsCompleted returned true when it should be false")
 		}
 	}
-
 }
 
 func TestIsStarted(t *testing.T) {
@@ -75,5 +74,4 @@ func TestIsStarted(t *testing.T) {
 			t.Error("IsStarted returned true when it should be false")
 		}
 	}
-
 }
