@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/ReconfigureIO/cobra"
-	"github.com/ReconfigureIO/reco"
+	"github.com/ReconfigureIO/reco/pkg/reco"
 	"github.com/ReconfigureIO/reco/logger"
 )
 
