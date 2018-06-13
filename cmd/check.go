@@ -13,8 +13,8 @@ import (
 	"sync"
 
 	"github.com/ReconfigureIO/cobra"
-	"github.com/ReconfigureIO/reco/downloader"
-	"github.com/ReconfigureIO/reco/logger"
+	"github.com/ReconfigureIO/reco/pkg/downloader"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 	"github.com/abiosoft/goutils/env"
 	"github.com/reconfigureio/archiver"
 )

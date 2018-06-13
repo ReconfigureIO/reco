@@ -6,9 +6,9 @@ import (
 	"strconv"
 
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco/pkg/logger"
+	"github.com/ReconfigureIO/reco/pkg/printer"
 	"github.com/ReconfigureIO/reco/pkg/reco"
-	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/reco/printer"
 )
 
 var listVars struct {

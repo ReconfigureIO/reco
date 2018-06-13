@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 	"github.com/ReconfigureIO/reco/pkg/reco"
-	"github.com/ReconfigureIO/reco/logger"
 )
 
 var (

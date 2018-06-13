@@ -6,8 +6,8 @@ import (
 	"runtime"
 
 	"github.com/ReconfigureIO/cobra"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 	"github.com/ReconfigureIO/reco/pkg/reco"
-	"github.com/ReconfigureIO/reco/logger"
 )
 
 var errorGraphNotFound = errors.New("No graph with that ID could be found. Run 'reco graph list' to view available graphs")
