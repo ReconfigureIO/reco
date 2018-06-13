@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/reco/printer"
+	"github.com/ReconfigureIO/reco/pkg/logger"
+	"github.com/ReconfigureIO/reco/pkg/printer"
 )
 
 var errNoActiveProject = errors.New("No active project is set, run 'reco project set' to set one")

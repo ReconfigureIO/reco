@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ReconfigureIO/reco/logger"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 	"github.com/spf13/viper"
 )
 

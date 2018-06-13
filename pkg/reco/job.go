@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ReconfigureIO/reco/printer"
+	"github.com/ReconfigureIO/reco/pkg/printer"
 )
 
 // Job is a set of actions for the reco platform.

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/ReconfigureIO/cobra"
-	"github.com/ReconfigureIO/reco/logger"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 )
 
 // BuildInfo is the build information of reco binary. This is

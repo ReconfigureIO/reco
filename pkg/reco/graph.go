@@ -4,9 +4,9 @@ import (
 	"errors"
 	"os"
 
-	"github.com/ReconfigureIO/reco/downloader"
-	"github.com/ReconfigureIO/reco/logger"
-	"github.com/ReconfigureIO/reco/printer"
+	"github.com/ReconfigureIO/reco/pkg/downloader"
+	"github.com/ReconfigureIO/reco/pkg/logger"
+	"github.com/ReconfigureIO/reco/pkg/printer"
 	humanize "github.com/dustin/go-humanize"
 )
 

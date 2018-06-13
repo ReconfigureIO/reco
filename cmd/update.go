@@ -11,7 +11,7 @@ import (
 
 	"github.com/ReconfigureIO/cobra"
 	"github.com/ReconfigureIO/go-update"
-	"github.com/ReconfigureIO/reco/logger"
+	"github.com/ReconfigureIO/reco/pkg/logger"
 	"github.com/google/go-github/github"
 )
 
