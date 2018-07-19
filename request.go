@@ -174,6 +174,7 @@ type apiResponse struct {
 	} `json:"build,omitempty"`
 	// workaround for deployments
 	// TODO: fix on platform
+	Comment   string  `json:"comment"`
 	Events    []event `json:"events,omitempty"`
 	Command   string  `json:"command,omitempty"`
 	IPAddress string  `json:"ip_address,omitempty"`

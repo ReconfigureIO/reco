@@ -57,6 +57,7 @@ type jobInfo struct {
 	Command   string
 	Build     string
 	IPAddress string
+	Comment   string
 }
 
 // UnmarshalJSON customizes JSON decoding for BuildInfo.
@@ -77,6 +78,7 @@ func (ji *jobInfo) UnmarshalJSON(b []byte) error {
 	ji.Project = str.Project.Name
 	ji.Command = str.Command
 	ji.IPAddress = str.IPAddress
+	ji.Comment = str.Comment
 	if str.Build.ID != "" {
 		ji.Build = str.Build.ID
 	}
