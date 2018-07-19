@@ -15,7 +15,7 @@ var (
 	buildVars = struct {
 		wait    bool
 		force   bool
-		comment string
+		message string
 	}{
 		wait: true,
 	}
@@ -75,7 +75,7 @@ var (
 func init() {
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.wait, "wait", "w", buildVars.wait, "Wait for the build to complete. If wait=false, logs will only be displayed up to where the build is started and assigned its unique ID. Use 'reco build list' to check the status of your builds")
 	buildCmdStart.PersistentFlags().BoolVarP(&buildVars.force, "force", "f", buildVars.force, "Force a build to start. Ignore source code validation")
-	buildCmdStart.PersistentFlags().StringVarP(&buildVars.comment, "comment", "m", buildVars.comment, "Add a comment to describe this build's purpose")
+	buildCmdStart.PersistentFlags().StringVarP(&buildVars.message, "message", "m", buildVars.message, "Add a message to describe this build's purpose")
 
 	buildCmd := genDevCommand("build", "build", "b", "builds")
 	buildCmd.AddCommand(genListSubcommand("builds", tool.Build()))
@@ -92,7 +92,7 @@ func startBuild(cmd *cobra.Command, args []string) {
 		exitWithError(errInvalidSourceDirectory)
 	}
 
-	id, err := tool.Build().Start(reco.Args{srcDir, buildVars.wait, buildVars.comment})
+	id, err := tool.Build().Start(reco.Args{srcDir, buildVars.wait, buildVars.message})
 	if err != nil {
 		exitWithError(err)
 	}
