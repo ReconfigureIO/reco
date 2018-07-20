@@ -106,7 +106,7 @@ func (b buildJob) List(filter M) (printer.Table, error) {
 	}
 
 	table = printer.Table{
-		Header: []string{"build id", "status", "started", "duration"},
+		Header: []string{"build id", "status", "started", "duration", "message"},
 		Body:   body,
 	}
 	if allProjects {
