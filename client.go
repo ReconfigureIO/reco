@@ -284,21 +284,21 @@ func (p *clientImpl) waitForStatus(jobType string, id string, targetStatus strin
 			case "deployment":
 				switch status {
 				case StatusQueued:
-					logger.Info.Println("Waiting for EC2 instance to be allocated")
+					logger.Info.Println("Waiting for FPGA instance to be available")
 				case StatusSubmitted:
-					logger.Info.Println("Waiting for Spot Instance Request to be created")
+					logger.Info.Println("Waiting for request to be queued")
 				default:
 				}
 			case "build":
 				switch status {
 				case StatusQueued:
-					logger.Info.Println("Waiting for Batch job to start")
+					logger.Info.Println("Waiting for job to start")
 				default:
 				}
 			case "simulation":
 				switch status {
 				case StatusQueued:
-					logger.Info.Println("Waiting for Batch job to start")
+					logger.Info.Println("Waiting for job to start")
 				default:
 				}
 			default:
