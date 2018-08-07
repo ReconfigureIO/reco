@@ -15,13 +15,13 @@ type buildJob struct {
 	*clientImpl
 }
 
-func (b buildJob) prepareBuild() (string, error) {
+func (b buildJob) prepareBuild(message string) (string, error) {
 	projectID, err := b.projectID()
 	if err != nil {
 		return "", err
 	}
 	req := b.apiRequest(endpoints.builds.String())
-	reqBody := M{"project_id": projectID}
+	reqBody := M{"project_id": projectID, "message": message}
 	resp, err := req.Do("POST", reqBody)
 	if err != nil {
 		return "", err
@@ -39,9 +39,10 @@ func (b buildJob) prepareBuild() (string, error) {
 func (b buildJob) Start(args Args) (string, error) {
 	srcDir := String(args.At(0))
 	wait := Bool(args.At(1))
+	message := String(args.At(2))
 
 	logger.Info.Println("preparing build")
-	id, err := b.prepareBuild()
+	id, err := b.prepareBuild(message)
 	if err != nil {
 		return "", err
 	}
@@ -95,6 +96,7 @@ func (b buildJob) List(filter M) (printer.Table, error) {
 			build.Status,
 			buildTime,
 			timeRounder(build.Duration).Nearest(time.Second),
+			build.Message,
 		}
 		if allProjects {
 			row = append(row, build.Project)
@@ -104,7 +106,7 @@ func (b buildJob) List(filter M) (printer.Table, error) {
 	}
 
 	table = printer.Table{
-		Header: []string{"build id", "status", "started", "duration"},
+		Header: []string{"build id", "status", "started", "duration", "message"},
 		Body:   body,
 	}
 	if allProjects {
