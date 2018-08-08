@@ -152,17 +152,17 @@ func (b buildJob) Report(id string) (string, error) {
 		return "", errors.New("Unknown error occured")
 	}
 
-	var ApiResp struct {
+	var apiResp struct {
 		Value struct {
 			Report string `json:"report"`
 		} `json:"value"`
 	}
-	err = json.NewDecoder(resp.Body).Decode(&ApiResp)
+	err = json.NewDecoder(resp.Body).Decode(&apiResp)
 	if err != nil {
 		return "", err
 	}
 
-	validJSONReport := strings.Replace(ApiResp.Value.Report, "\\", "", -1)
+	validJSONReport := strings.Replace(apiResp.Value.Report, "\\", "", -1)
 	var prettyJSONReport bytes.Buffer
 	err = json.Indent(&prettyJSONReport, []byte(validJSONReport), "", "\t")
 	if err != nil {
