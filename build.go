@@ -1,7 +1,11 @@
 package reco
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/ReconfigureIO/reco/logger"
@@ -10,6 +14,12 @@ import (
 )
 
 var _ Job = &buildJob{}
+
+// BuildReporter can return build reports.
+type BuildReporter interface {
+	// Report returns a formatted JSON build report.
+	Report(id string) (string, error)
+}
 
 type buildJob struct {
 	*clientImpl
@@ -118,4 +128,46 @@ func (b buildJob) List(filter M) (printer.Table, error) {
 
 func (b buildJob) Log(id string, writer io.Writer) error {
 	return b.clientImpl.logJob("build", id)
+}
+
+type buildReport struct {
+	Report string `json:"report"`
+}
+
+func (b buildJob) Report(id string) (string, error) {
+	var req = b.apiRequest(endpoints.builds.Report())
+	req.param("id", id)
+	resp, err := req.Do("GET", nil)
+	if err != nil {
+		return "", err
+	}
+	switch resp.StatusCode {
+	case 404:
+		return "", errors.New("Report not found")
+	case 204:
+		return "", errors.New("No report generated. Reports are only generated for COMPLETED builds")
+	case 200:
+		break
+	default:
+		return "", errors.New("Unknown error occured")
+	}
+
+	var ApiResp struct {
+		Value struct {
+			Report string `json:"report"`
+		} `json:"value"`
+	}
+	err = json.NewDecoder(resp.Body).Decode(&ApiResp)
+	if err != nil {
+		return "", err
+	}
+
+	validJSONReport := strings.Replace(ApiResp.Value.Report, "\\", "", -1)
+	var prettyJSONReport bytes.Buffer
+	err = json.Indent(&prettyJSONReport, []byte(validJSONReport), "", "\t")
+	if err != nil {
+		return "", err
+	}
+
+	return string(prettyJSONReport.Bytes()), nil
 }

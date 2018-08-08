@@ -47,6 +47,11 @@ func (p Endpoint) Graph() string {
 	return p.Append("{id}", "graph")
 }
 
+// Report returns report endpoint.
+func (p Endpoint) Report() string {
+	return p.Append("{id}", "reports")
+}
+
 var (
 	endpoints = struct {
 		builds, deployments, projects, simulations, graphs, users Endpoint
