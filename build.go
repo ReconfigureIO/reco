@@ -169,5 +169,5 @@ func (b buildJob) Report(id string) (string, error) {
 		return "", err
 	}
 
-	return string(prettyJSONReport.Bytes()), nil
+	return prettyJSONReport.String(), nil
 }

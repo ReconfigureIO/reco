@@ -164,6 +164,6 @@ func openReport(_ *cobra.Command, args []string) {
 	if err != nil {
 		exitWithError(err)
 	}
-	logger.Std.Printf("Build Report: %s", report)
 
+	logger.Std.Printf("Build Report: %s", report)
 }
