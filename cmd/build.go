@@ -45,6 +45,14 @@ var (
 		},
 	}
 
+	buildCmdReport = &cobra.Command{
+		Use:     fmt.Sprintf("report [build_ID]"),
+		Aliases: []string{"reports"},
+		Short:   fmt.Sprintf("View reports for a completed build"),
+		Long:    fmt.Sprintf("View reports for a completed build, containing area and resource utilisation figures."),
+		Run:     openReport,
+	}
+
 	buildLogPreRun = func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			exitWithError("ID required")
@@ -82,6 +90,7 @@ func init() {
 	buildCmd.AddCommand(buildCmdLog)
 	buildCmd.AddCommand(buildCmdStop)
 	buildCmd.AddCommand(buildCmdStart)
+	buildCmd.AddCommand(buildCmdReport)
 	buildCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(buildCmd)
@@ -144,4 +153,17 @@ func hasMain(dir string) bool {
 		}
 	}
 	return foundMain
+}
+
+func openReport(_ *cobra.Command, args []string) {
+	if len(args) != 1 {
+		exitWithError("ID required")
+	}
+
+	report, err := tool.Build().(reco.BuildReporter).Report(args[0])
+	if err != nil {
+		exitWithError(err)
+	}
+
+	logger.Std.Printf("Build Report: %s", report)
 }
