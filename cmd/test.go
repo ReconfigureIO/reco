@@ -35,6 +35,14 @@ var (
 		},
 	}
 
+	testCmdReport = &cobra.Command{
+		Use:     fmt.Sprintf("report [simulation_ID]"),
+		Aliases: []string{"reports"},
+		Short:   fmt.Sprintf("View reports for a completed simulation"),
+		Long:    fmt.Sprintf("View reports for a completed simulation, containing area and resource utilisation figures."),
+		Run:     openTestReport,
+	}
+
 	testLogPreRun = func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			exitWithError("ID required")
@@ -68,6 +76,7 @@ func init() {
 	testCmd.AddCommand(testCmdLog)
 	testCmd.AddCommand(testCmdStop)
 	testCmd.AddCommand(testCmdStart)
+	testCmd.AddCommand(testCmdReport)
 	testCmd.PersistentFlags().StringVar(&project, "project", project, "Project to use. If unset, the active project is used")
 
 	RootCmd.AddCommand(testCmd)
@@ -94,4 +103,17 @@ func startTest(cmd *cobra.Command, args []string) {
 
 	status := tool.Test().Status(id)
 	logger.Std.Println("Simulation ID: " + id + " Status: " + strings.Title(status))
+}
+
+func openTestReport(_ *cobra.Command, args []string) {
+	if len(args) != 1 {
+		exitWithError("ID required")
+	}
+
+	report, err := tool.Test().(reco.SimulationReporter).Report(args[0]) // TODO campgareth: Anything but this weird form.
+	if err != nil {
+		exitWithError(err)
+	}
+
+	logger.Std.Println(report)
 }
