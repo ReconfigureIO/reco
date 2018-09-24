@@ -52,8 +52,8 @@ your command. The two forms are equivalent:
 	deploymentCmdConnect = &cobra.Command{
 		Use:     "connect <deploy_ID>",
 		Aliases: []string{"c", "connects"},
-		Short:   "Connect to a running deployment",
-		Long:    "Connect to a running deployment.",
+		Short:   "Connects to a deployment in your browser",
+		Long:    "Connects to a running deployment on port 80 using your default web browser",
 		Run:     connectDeployment,
 	}
 
